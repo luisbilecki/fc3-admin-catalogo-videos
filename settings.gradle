@@ -1,2 +1,5 @@
 rootProject.name = 'fc3-admin-catalogo-videos'
+include 'domain'
+include 'application'
+include 'infrastructure'
 
