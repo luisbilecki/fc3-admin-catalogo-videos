@@ -1,13 +1,12 @@
-package com.fullcycle.admin.catalog.application;
+package com.fullcycle.admin.catalog.application
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 
-public class UseCaseTest {
-
+class UseCaseTest {
     @Test
-    public void testCreateUseCase() {
-        Assertions.assertNotNull(new UseCase());
-        Assertions.assertNotNull(new UseCase().execute());
+    fun testCreateUseCase() {
+        Assertions.assertNotNull(UseCase())
+        Assertions.assertNotNull(UseCase().execute())
     }
 }

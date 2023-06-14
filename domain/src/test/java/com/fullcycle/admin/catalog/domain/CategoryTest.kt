@@ -1,25 +1,23 @@
-package com.fullcycle.admin.catalog.domain;
+package com.fullcycle.admin.catalog.domain
 
-import com.fullcycle.admin.catalog.domain.category.Category;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import com.fullcycle.admin.catalog.domain.category.Category
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 
-public class CategoryTest {
-
+class CategoryTest {
     @Test
-    public void givenAValidParams_whenCallNewCategory_thenInstantiateNewCategory() {
-        final var expectedName = "Filmes";
-        final var expectedDescription = "A categoria mais assistida";
-        final var expectedIsActive = true;
-
-        final var actualCategory = Category.newCategory(expectedName, expectedDescription, expectedIsActive);
-        Assertions.assertNotNull(actualCategory);
-        Assertions.assertNotNull(actualCategory.getId());
-        Assertions.assertEquals(expectedName, actualCategory.getName());
-        Assertions.assertEquals(expectedDescription, actualCategory.getDescription());
-        Assertions.assertEquals(expectedIsActive, actualCategory.isActive());
-        Assertions.assertNotNull(actualCategory.getCreatedAt());
-        Assertions.assertNotNull(actualCategory.getUpdatedAt());
-        Assertions.assertNull(actualCategory.getDeletedAt());
+    fun givenAValidParams_whenCallNewCategory_thenInstantiateNewCategory() {
+        val expectedName = "Filmes"
+        val expectedDescription = "A categoria mais assistida"
+        val expectedIsActive = true
+        val actualCategory = Category.newCategory(expectedName, expectedDescription, expectedIsActive)
+        Assertions.assertNotNull(actualCategory)
+        Assertions.assertNotNull(actualCategory.id)
+        Assertions.assertEquals(expectedName, actualCategory.name)
+        Assertions.assertEquals(expectedDescription, actualCategory.description)
+        Assertions.assertEquals(expectedIsActive, actualCategory.isActive)
+        Assertions.assertNotNull(actualCategory.createdAt)
+        Assertions.assertNotNull(actualCategory.updatedAt)
+        Assertions.assertNull(actualCategory.deletedAt)
     }
 }

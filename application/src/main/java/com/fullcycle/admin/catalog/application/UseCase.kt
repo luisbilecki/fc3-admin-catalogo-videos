@@ -1,8 +1,9 @@
-package com.fullcycle.admin.catalog.application;
+package com.fullcycle.admin.catalog.application
 
-public class UseCase {
+import com.fullcycle.admin.catalog.domain.category.Category
 
-    public Category execute() {
-        return new Category();
+class UseCase {
+    fun execute(): Category {
+        return Category.newCategory("", "", false)
     }
 }
