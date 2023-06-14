@@ -1,12 +1,13 @@
 package com.fullcycle.admin.catalog.domain.category
 
 import com.fullcycle.admin.catalog.domain.AggregateRoot
+import com.fullcycle.admin.catalog.domain.validation.ValidationHandler
 import java.time.Instant
 import java.util.*
 
 class Category private constructor(
         val id: CategoryID,
-        val name: String,
+        val name: String?,
         val description: String,
         val isActive: Boolean,
         val createdAt: Instant,
@@ -15,10 +16,12 @@ class Category private constructor(
 ) : AggregateRoot<CategoryID>(id) {
 
     companion object {
-        fun newCategory(aName: String, aDescription: String, aIsActive: Boolean): Category {
+        fun newCategory(aName: String?, aDescription: String, aIsActive: Boolean): Category {
             val id = CategoryID.unique()
             val now = Instant.now()
             return Category(id, aName, aDescription, aIsActive, now, now, null)
         }
     }
+
+    override fun validate(handler: ValidationHandler) = CategoryValidator(this, handler).validate()
 }

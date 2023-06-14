@@ -1,5 +1,3 @@
 package com.fullcycle.admin.catalog.domain
 
-open class AggregateRoot<ID: Identifier> : Entity<ID>  {
-    constructor(id: ID) : super(id)
-}
+abstract class AggregateRoot<ID : Identifier> protected constructor(id: ID) : Entity<ID>(id)

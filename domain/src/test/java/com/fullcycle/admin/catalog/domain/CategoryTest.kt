@@ -1,6 +1,8 @@
 package com.fullcycle.admin.catalog.domain
 
 import com.fullcycle.admin.catalog.domain.category.Category
+import com.fullcycle.admin.catalog.domain.exceptions.DomainException
+import com.fullcycle.admin.catalog.domain.validation.handler.ThrowsValidationHandler
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
@@ -27,12 +29,12 @@ class CategoryTest {
         val expectedName = null;
         val expectedDescription = "A categoria mais assistida"
         val expectedIsActive = true
-        val expectedErrorMessage = "'name', should not be null"
+        val expectedErrorMessage = "'name' should not be null"
         val expectedErrorCount = 1
         val actualCategory = Category.newCategory(expectedName, expectedDescription, expectedIsActive)
-        val actualException = Assertions.assertThrows(DomainException.class, () -> actualCategory.validate())
+        val actualException = Assertions.assertThrows(DomainException::class.java) { actualCategory.validate(ThrowsValidationHandler()) }
 
-        Assertions.assertEquals(expectedErrorMessage, actualException.errors)
+        Assertions.assertEquals(expectedErrorMessage, actualException.errors.first().message)
         Assertions.assertEquals(expectedErrorCount, actualException.errors.size)
     }
 }
