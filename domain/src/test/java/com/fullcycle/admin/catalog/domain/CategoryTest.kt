@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
 class CategoryTest {
+
     @Test
     fun givenAValidParams_whenCallNewCategory_thenInstantiateNewCategory() {
         val expectedName = "Filmes"
@@ -19,5 +20,19 @@ class CategoryTest {
         Assertions.assertNotNull(actualCategory.createdAt)
         Assertions.assertNotNull(actualCategory.updatedAt)
         Assertions.assertNull(actualCategory.deletedAt)
+    }
+
+    @Test
+    fun givenAnInvalidNullName_whenCallNewCategoryAndValidate_thenShouldReceiveError() {
+        val expectedName = null;
+        val expectedDescription = "A categoria mais assistida"
+        val expectedIsActive = true
+        val expectedErrorMessage = "'name', should not be null"
+        val expectedErrorCount = 1
+        val actualCategory = Category.newCategory(expectedName, expectedDescription, expectedIsActive)
+        val actualException = Assertions.assertThrows(DomainException.class, () -> actualCategory.validate())
+
+        Assertions.assertEquals(expectedErrorMessage, actualException.errors)
+        Assertions.assertEquals(expectedErrorCount, actualException.errors.size)
     }
 }
