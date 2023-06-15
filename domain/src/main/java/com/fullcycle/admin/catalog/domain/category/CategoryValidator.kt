@@ -10,8 +10,27 @@ class CategoryValidator(
 ) : Validator(validationHandler) {
 
     override fun validate() {
-        if (category.name == null) {
+        checkNameConstraints()
+    }
+
+    private fun checkNameConstraints() {
+        val name = category.name
+
+        if (name == null) {
             validationHandler().append(Error("'name' should not be null"))
+            return;
         }
+
+        if (name.isBlank()) {
+            validationHandler().append(Error("'name' should not be empty"))
+            return;
+        }
+
+        val length = name.trim().length
+        if (length > 255 || length < 3) {
+            validationHandler().append(Error("'name' must be between 3 and 255 characters"))
+        }
+
+
     }
 }

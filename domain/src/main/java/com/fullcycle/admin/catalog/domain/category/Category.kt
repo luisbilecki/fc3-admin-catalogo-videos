@@ -16,10 +16,11 @@ class Category private constructor(
 ) : AggregateRoot<CategoryID>(id) {
 
     companion object {
-        fun newCategory(aName: String?, aDescription: String, aIsActive: Boolean): Category {
+        fun newCategory(name: String?, description: String, isActive: Boolean): Category {
             val id = CategoryID.unique()
             val now = Instant.now()
-            return Category(id, aName, aDescription, aIsActive, now, now, null)
+            val deletedAt = if (isActive) null else now
+            return Category(id, name, description, isActive, now, now, deletedAt)
         }
     }
 
