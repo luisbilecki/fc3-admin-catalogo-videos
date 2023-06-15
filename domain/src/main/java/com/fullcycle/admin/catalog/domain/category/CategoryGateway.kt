@@ -1,8 +1,6 @@
 package com.fullcycle.admin.catalog.domain.category
 
 import com.fullcycle.admin.catalog.domain.pagination.Pagination
-import java.util.*
-
 
 interface CategoryGateway {
 
