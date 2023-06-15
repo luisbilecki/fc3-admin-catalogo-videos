@@ -9,10 +9,10 @@ class Category private constructor(
         val id: CategoryID,
         val name: String?,
         val description: String,
-        val isActive: Boolean,
+        var isActive: Boolean,
         val createdAt: Instant,
-        val updatedAt: Instant,
-        val deletedAt: Instant?
+        var updatedAt: Instant,
+        var deletedAt: Instant?
 ) : AggregateRoot<CategoryID>(id) {
 
     companion object {
@@ -25,4 +25,20 @@ class Category private constructor(
     }
 
     override fun validate(handler: ValidationHandler) = CategoryValidator(this, handler).validate()
+
+    fun activate(): Category {
+        deletedAt = null
+        isActive = true
+        updatedAt = Instant.now()
+        return this
+    }
+
+    fun deactivate(): Category {
+        if (deletedAt == null) {
+            deletedAt = Instant.now()
+        }
+        isActive = false
+        updatedAt = Instant.now()
+        return this
+    }
 }

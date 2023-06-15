@@ -9,6 +9,11 @@ class CategoryValidator(
         validationHandler: ValidationHandler
 ) : Validator(validationHandler) {
 
+    companion object {
+        const val NAME_MAX_LENGTH = 255
+        const val NAME_MIN_LENGTH = 3
+    }
+
     override fun validate() {
         checkNameConstraints()
     }
@@ -27,10 +32,8 @@ class CategoryValidator(
         }
 
         val length = name.trim().length
-        if (length > 255 || length < 3) {
+        if (length > NAME_MAX_LENGTH || length < NAME_MIN_LENGTH) {
             validationHandler().append(Error("'name' must be between 3 and 255 characters"))
         }
-
-
     }
 }
