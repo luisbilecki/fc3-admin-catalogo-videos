@@ -3,12 +3,11 @@ package com.fullcycle.admin.catalog.domain.category
 import com.fullcycle.admin.catalog.domain.AggregateRoot
 import com.fullcycle.admin.catalog.domain.validation.ValidationHandler
 import java.time.Instant
-import java.util.*
 
 class Category private constructor(
         val id: CategoryID,
-        val name: String?,
-        val description: String,
+        var name: String?,
+        var description: String,
         var isActive: Boolean,
         val createdAt: Instant,
         var updatedAt: Instant,
@@ -27,18 +26,34 @@ class Category private constructor(
     override fun validate(handler: ValidationHandler) = CategoryValidator(this, handler).validate()
 
     fun activate(): Category {
-        deletedAt = null
-        isActive = true
-        updatedAt = Instant.now()
+        this.deletedAt = null
+        this.isActive = true
+        this.updatedAt = Instant.now()
         return this
     }
 
     fun deactivate(): Category {
-        if (deletedAt == null) {
-            deletedAt = Instant.now()
+        if (this.deletedAt == null) {
+            this.deletedAt = Instant.now()
         }
-        isActive = false
-        updatedAt = Instant.now()
+        this.isActive = false
+        this.updatedAt = Instant.now()
+        return this
+    }
+
+    fun update(
+            name: String?,
+            description: String,
+            isActive: Boolean
+    ): Category {
+        if (isActive) {
+            activate()
+        } else {
+            deactivate()
+        }
+        this.name = name
+        this.description = description
+        this.updatedAt = Instant.now()
         return this
     }
 }
