@@ -1,12 +1,17 @@
 package com.fullcycle.admin.catalog.application
 
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.api.extension.ExtensionContext
+import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
 
 @ExtendWith(MockitoExtension::class)
-class UseCaseTest {
-    @Test
-    fun testCreateUseCase() {
+abstract class UseCaseTest : BeforeEachCallback {
+    @Throws(Exception::class)
+    override fun beforeEach(context: ExtensionContext) {
+        Mockito.reset(mocks.toTypedArray())
     }
+
+    protected abstract val mocks: List<Any?>
 }
