@@ -4,6 +4,7 @@ import com.fullcycle.admin.catalog.domain.AggregateRoot
 import com.fullcycle.admin.catalog.domain.validation.ValidationHandler
 import java.time.Instant
 
+
 class Category private constructor(
         val id: CategoryID,
         var name: String?,
@@ -12,7 +13,7 @@ class Category private constructor(
         val createdAt: Instant,
         var updatedAt: Instant,
         var deletedAt: Instant?
-) : AggregateRoot<CategoryID>(id) {
+) : AggregateRoot<CategoryID>(id), Cloneable {
 
     companion object {
         fun newCategory(name: String?, description: String?, isActive: Boolean): Category {
@@ -21,9 +22,29 @@ class Category private constructor(
             val deletedAt = if (isActive) null else now
             return Category(id, name, description, isActive, now, now, deletedAt)
         }
+
+        fun with(category: Category): Category {
+            return Category(
+                    category.id,
+                    category.name,
+                    category.description,
+                    category.isActive,
+                    category.createdAt,
+                    category.updatedAt,
+                    category.deletedAt
+            )
+        }
     }
 
     override fun validate(handler: ValidationHandler) = CategoryValidator(this, handler).validate()
+
+    override fun clone(): Category {
+        return try {
+            super.clone() as Category
+        } catch (e: CloneNotSupportedException) {
+            throw AssertionError()
+        }
+    }
 
     fun activate(): Category {
         this.deletedAt = null

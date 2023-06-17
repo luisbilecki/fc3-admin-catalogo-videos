@@ -43,7 +43,7 @@ class UpdateCategoryUseCaseTest {
         )
 
         `when`(categoryGateway.findById(eq(expectedId)))
-                .thenReturn(category)
+                .thenReturn(Category.with(category))
         `when`(categoryGateway.update(any<Category>()))
                 .thenAnswer(returnsFirstArg<Category?>())
 
