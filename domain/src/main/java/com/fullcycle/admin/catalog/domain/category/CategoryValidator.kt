@@ -23,12 +23,12 @@ class CategoryValidator(
 
         if (name == null) {
             validationHandler().append(Error("'name' should not be null"))
-            return;
+            return
         }
 
         if (name.isBlank()) {
             validationHandler().append(Error("'name' should not be empty"))
-            return;
+            return
         }
 
         val length = name.trim().length
