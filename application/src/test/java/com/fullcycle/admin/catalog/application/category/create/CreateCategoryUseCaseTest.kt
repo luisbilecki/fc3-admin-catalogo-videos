@@ -28,6 +28,11 @@ class CreateCategoryUseCaseTest {
     @Mock
     private lateinit var categoryGateway: CategoryGateway
 
+    @BeforeEach
+    fun cleanUp() {
+        Mockito.reset(categoryGateway)
+    }
+
     @Test
     fun givenAValidCommand_whenCallsCreateCategory_shouldReturnCategoryId() {
         val expectedName = "Filmes"
