@@ -3,7 +3,9 @@ package com.fullcycle.admin.catalog.domain.validation
 interface ValidationHandler {
 
     fun append(error: Error): ValidationHandler
+
     fun append(handler: ValidationHandler): ValidationHandler
+
     fun validate(validation: Validation): ValidationHandler
 
     fun getErrors(): List<Error>
