@@ -41,23 +41,26 @@ class UpdateCategoryUseCaseTest {
                 expectedDescription,
                 expectedIsActive
         )
-        `when`(categoryGateway!!.findById(eq(expectedId)))
+
+        `when`(categoryGateway.findById(eq(expectedId)))
                 .thenReturn(category)
-        `when`(categoryGateway!!.update(any()))
+        `when`(categoryGateway.update(any<Category>()))
                 .thenAnswer(returnsFirstArg<Category?>())
 
         val actualOutput = useCase.execute(command).get()
+
         Assertions.assertNotNull(actualOutput)
         Assertions.assertNotNull(actualOutput.id)
-        Mockito.verify(categoryGateway, times(1))!!.findById(eq(expectedId))
-        Mockito.verify(categoryGateway, times(1))!!.update(argThat { updatedCategory ->
+
+        Mockito.verify(categoryGateway, times(1)).findById(eq(expectedId))
+        Mockito.verify(categoryGateway, times(1)).update(argThat { updatedCategory ->
             (
                     expectedName == updatedCategory.name
                             && expectedDescription == updatedCategory.description
                             && expectedIsActive == updatedCategory.isActive
                             && expectedId == updatedCategory.id
                             && category.createdAt == updatedCategory.createdAt
-                            && category.updatedAt == updatedCategory.updatedAt
+                            && category.updatedAt.isBefore(updatedCategory.updatedAt)
                     && Objects.isNull(updatedCategory.deletedAt))
         })
     }
