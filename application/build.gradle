@@ -16,8 +16,9 @@ dependencies {
     testImplementation("org.mockito:mockito-junit-jupiter:5.3.1")
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.0.0")
 
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("io.vavr:vavr:0.10.4")
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 }
 
 test {
