@@ -15,7 +15,6 @@ import org.mockito.Mockito.`when`
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.eq
 
-
 @ExtendWith(MockitoExtension::class)
 class GetCategoryByIdUseCaseTest {
 
