@@ -7,7 +7,7 @@ import java.time.Instant
 class Category private constructor(
         val id: CategoryID,
         var name: String?,
-        var description: String,
+        var description: String?,
         var isActive: Boolean,
         val createdAt: Instant,
         var updatedAt: Instant,
@@ -15,7 +15,7 @@ class Category private constructor(
 ) : AggregateRoot<CategoryID>(id) {
 
     companion object {
-        fun newCategory(name: String?, description: String, isActive: Boolean): Category {
+        fun newCategory(name: String?, description: String?, isActive: Boolean): Category {
             val id = CategoryID.unique()
             val now = Instant.now()
             val deletedAt = if (isActive) null else now
