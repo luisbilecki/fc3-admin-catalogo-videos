@@ -13,7 +13,15 @@ interface ValidationHandler {
 }
 
 fun ValidationHandler.hasError(): Boolean {
-    return getErrors() != null && !getErrors().isEmpty();
+    return getErrors() != null && getErrors().isNotEmpty();
+}
+
+fun ValidationHandler.firstError(): Error? {
+    return if (hasError()) {
+        getErrors().first()
+    } else {
+        null
+    }
 }
 
 interface Validation {

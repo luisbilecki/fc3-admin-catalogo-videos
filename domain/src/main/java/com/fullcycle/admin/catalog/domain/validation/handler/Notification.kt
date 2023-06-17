@@ -1,9 +1,9 @@
 package com.fullcycle.admin.catalog.domain.validation.handler
 
 import com.fullcycle.admin.catalog.domain.exceptions.DomainException
+import com.fullcycle.admin.catalog.domain.validation.Error
 import com.fullcycle.admin.catalog.domain.validation.Validation
 import com.fullcycle.admin.catalog.domain.validation.ValidationHandler
-import com.fullcycle.admin.catalog.domain.validation.Error
 
 class Notification private constructor(private val errors: MutableList<Error>) : ValidationHandler {
 
@@ -39,6 +39,10 @@ class Notification private constructor(private val errors: MutableList<Error>) :
 
         fun create(error: Error): Notification {
             return Notification(ArrayList()).append(error)
+        }
+
+        fun create(t: Throwable): Notification {
+            return create(Error(t.message!!))
         }
     }
 }
