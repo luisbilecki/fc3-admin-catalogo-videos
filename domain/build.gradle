@@ -18,6 +18,10 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
 kotlin {
-    jvmToolchain(11)
+    jvmToolchain(16)
 }
+
+sourceCompatibility = JavaVersion.VERSION_16
+targetCompatibility = JavaVersion.VERSION_16
