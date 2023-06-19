@@ -23,17 +23,33 @@ class Category private constructor(
             return Category(id, name, description, isActive, now, now, deletedAt)
         }
 
-        fun with(category: Category): Category {
-            return Category(
-                    category.id,
-                    category.name,
-                    category.description,
-                    category.isActive,
-                    category.createdAt,
-                    category.updatedAt,
-                    category.deletedAt
-            )
-        }
+        fun with(
+                id: CategoryID,
+                name: String?,
+                description: String?,
+                active: Boolean,
+                createdAt: Instant?,
+                updatedAt: Instant?,
+                deletedAt: Instant?
+        ) = Category(
+                id,
+                name,
+                description,
+                active,
+                createdAt!!,
+                updatedAt!!,
+                deletedAt
+        )
+
+        fun with(category: Category) = Category(
+                category.id,
+                category.name,
+                category.description,
+                category.isActive,
+                category.createdAt,
+                category.updatedAt,
+                category.deletedAt
+        )
     }
 
     override fun validate(handler: ValidationHandler) = CategoryValidator(this, handler).validate()
