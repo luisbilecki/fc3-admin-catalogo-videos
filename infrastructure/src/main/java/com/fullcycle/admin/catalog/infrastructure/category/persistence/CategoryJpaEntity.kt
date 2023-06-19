@@ -34,6 +34,7 @@ class CategoryJpaEntity {
     var deletedAt: Instant? = null
 
     constructor()
+
     private constructor(
         id: String,
         name: String?,
