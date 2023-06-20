@@ -15,8 +15,14 @@ class CategoryMySQLGateway(private val repository: CategoryRepository) : Categor
 
     override fun create(category: Category) = save(category)
 
-    override fun deleteById(anId: CategoryID) {}
-    override fun findById(anId: CategoryID): Category? {
+    override fun deleteById(id: CategoryID) {
+        val idToDelete = id.value
+        if (repository.existsById(idToDelete)) {
+            repository.deleteById(idToDelete)
+        }
+    }
+
+    override fun findById(id: CategoryID): Category? {
         return null
     }
 
