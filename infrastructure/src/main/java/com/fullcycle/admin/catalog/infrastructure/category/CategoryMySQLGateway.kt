@@ -7,7 +7,12 @@ import com.fullcycle.admin.catalog.domain.category.CategorySearchQuery
 import com.fullcycle.admin.catalog.domain.pagination.Pagination
 import com.fullcycle.admin.catalog.infrastructure.category.persistence.CategoryJpaEntity
 import com.fullcycle.admin.catalog.infrastructure.category.persistence.CategoryRepository
+import com.fullcycle.admin.catalog.infrastructure.utils.SpecificationUtils.like
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
+import org.springframework.data.jpa.domain.Specification
 import org.springframework.stereotype.Service
+import java.util.*
 
 
 @Service
@@ -30,7 +35,30 @@ class CategoryMySQLGateway(private val repository: CategoryRepository) : Categor
     override fun update(category: Category) = save(category)
 
     override fun findAll(query: CategorySearchQuery): Pagination<Category> {
-        return Pagination(0, 0, 0, emptyList())
+        val page: PageRequest = PageRequest.of(
+            query.page,
+            query.perPage,
+            Sort.by(Sort.Direction.fromString(query.direction), query.sort)
+        )
+
+        val specifications = Optional.ofNullable(query.terms)
+            .filter { str -> str.isNotBlank() }
+            .map { str ->
+                val nameLike: Specification<CategoryJpaEntity> = like("name", str)
+                val descriptionLike: Specification<CategoryJpaEntity> =
+                    like("description", str)
+                nameLike.or(descriptionLike)
+            }
+            .orElse(null)
+
+        val pageResult = repository.findAll(Specification.where(specifications), page)
+
+        return Pagination(
+            pageResult.number,
+            pageResult.size,
+            pageResult.totalElements,
+            pageResult.map { obj: CategoryJpaEntity -> obj.toAggregate() }.toList()
+        )
     }
 
     private fun save(category: Category) = repository
