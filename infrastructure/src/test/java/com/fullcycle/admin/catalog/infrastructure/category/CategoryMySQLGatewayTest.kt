@@ -166,16 +166,25 @@ open class CategoryMySQLGatewayTest {
 
         Assertions.assertEquals(1, categoryRepository.count())
 
-        val actualCategory = categoryGateway.findById(category.id).get()
+        val actualCategory = categoryGateway.findById(category.id)!!
 
         Assertions.assertEquals(1, categoryRepository.count())
-        Assertions.assertEquals(category.id, actualCategory.getId())
-        Assertions.assertEquals(expectedName, actualCategory.getName())
-        Assertions.assertEquals(expectedDescription, actualCategory.getDescription())
-        Assertions.assertEquals(expectedIsActive, actualCategory.isActive())
-        Assertions.assertEquals(category.createdAt, actualCategory.getCreatedAt())
-        Assertions.assertTrue(category.updatedAt.isBefore(actualCategory.getUpdatedAt()))
-        Assertions.assertEquals(category.deletedAt, actualCategory.getDeletedAt())
-        Assertions.assertNull(actualCategory.getDeletedAt())
+        Assertions.assertEquals(category.id, actualCategory.id)
+        Assertions.assertEquals(expectedName, actualCategory.name)
+        Assertions.assertEquals(expectedDescription, actualCategory.description)
+        Assertions.assertEquals(expectedIsActive, actualCategory.isActive)
+        Assertions.assertEquals(category.createdAt, actualCategory.createdAt)
+        Assertions.assertEquals(category.updatedAt, actualCategory.updatedAt)
+        Assertions.assertEquals(category.deletedAt, actualCategory.deletedAt)
+        Assertions.assertNull(actualCategory.deletedAt)
+    }
+
+    @Test
+    fun givenValidCategoryIdNotStored_whenCallsFindById_shouldReturnEmpty() {
+        Assertions.assertEquals(0, categoryRepository.count())
+
+        val actualCategory = categoryGateway.findById(CategoryID.from("empty"))
+
+        Assertions.assertNull(actualCategory)
     }
 }

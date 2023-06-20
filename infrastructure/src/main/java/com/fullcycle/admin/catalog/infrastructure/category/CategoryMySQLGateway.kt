@@ -22,9 +22,10 @@ class CategoryMySQLGateway(private val repository: CategoryRepository) : Categor
         }
     }
 
-    override fun findById(id: CategoryID): Category? {
-        return null
-    }
+    override fun findById(id: CategoryID): Category? = repository
+        .findById(id.value)
+        .map(CategoryJpaEntity::toAggregate)
+        .orElse(null)
 
     override fun update(category: Category) = save(category)
 
