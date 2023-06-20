@@ -1,6 +1,7 @@
 package com.fullcycle.admin.catalog.infrastructure.category
 
 import com.fullcycle.admin.catalog.domain.category.Category
+import com.fullcycle.admin.catalog.domain.category.CategoryID
 import com.fullcycle.admin.catalog.infrastructure.MySQLGatewayTest
 import com.fullcycle.admin.catalog.infrastructure.category.persistence.CategoryJpaEntity
 import com.fullcycle.admin.catalog.infrastructure.category.persistence.CategoryRepository
@@ -126,5 +127,29 @@ open class CategoryMySQLGatewayTest {
         Assertions.assertTrue(category.updatedAt.isBefore(actualCategory!!.updatedAt))
         Assertions.assertEquals(category.deletedAt, actualEntity.deletedAt)
         Assertions.assertNull(actualEntity.deletedAt)
+    }
+
+    @Test
+    fun givenAPrePersistedCategoryAndValidCategoryId_whenTryToDeleteIt_shouldDeleteCategory() {
+        val category = Category.newCategory("Filmes", null, true)
+
+        Assertions.assertEquals(0, categoryRepository.count())
+
+        categoryRepository.saveAndFlush(CategoryJpaEntity.from(category))
+
+        Assertions.assertEquals(1, categoryRepository.count())
+
+        categoryGateway.deleteById(category.id)
+
+        Assertions.assertEquals(0, categoryRepository.count())
+    }
+
+    @Test
+    fun givenInvalidCategoryId_whenTryToDeleteIt_shouldDeleteCategory() {
+        Assertions.assertEquals(0, categoryRepository.count())
+
+        categoryGateway.deleteById(CategoryID.from("invalid"))
+
+        Assertions.assertEquals(0, categoryRepository.count())
     }
 }
