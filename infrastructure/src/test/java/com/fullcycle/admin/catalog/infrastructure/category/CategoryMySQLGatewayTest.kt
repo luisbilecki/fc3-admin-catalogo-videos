@@ -9,7 +9,6 @@ import com.fullcycle.admin.catalog.infrastructure.category.persistence.CategoryR
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import java.util.List
 
 
 @MySQLGatewayTest
@@ -110,14 +109,14 @@ open class CategoryMySQLGatewayTest {
         val actualCategory = categoryGateway.update(aUpdatedCategory)
 
         Assertions.assertEquals(1, categoryRepository.count())
-        Assertions.assertEquals(category.id, actualCategory!!.id)
-        Assertions.assertEquals(expectedName, actualCategory!!.name)
-        Assertions.assertEquals(expectedDescription, actualCategory!!.description)
-        Assertions.assertEquals(expectedIsActive, actualCategory!!.isActive)
-        Assertions.assertEquals(category.createdAt, actualCategory!!.createdAt)
-        Assertions.assertTrue(category.updatedAt.isBefore(actualCategory!!.updatedAt))
-        Assertions.assertEquals(category.deletedAt, actualCategory!!.deletedAt)
-        Assertions.assertNull(actualCategory!!.deletedAt)
+        Assertions.assertEquals(category.id, actualCategory.id)
+        Assertions.assertEquals(expectedName, actualCategory.name)
+        Assertions.assertEquals(expectedDescription, actualCategory.description)
+        Assertions.assertEquals(expectedIsActive, actualCategory.isActive)
+        Assertions.assertEquals(category.createdAt, actualCategory.createdAt)
+        Assertions.assertTrue(category.updatedAt.isBefore(actualCategory.updatedAt))
+        Assertions.assertEquals(category.deletedAt, actualCategory.deletedAt)
+        Assertions.assertNull(actualCategory.deletedAt)
 
         val actualEntity = categoryRepository.findById(category.id.value).get()
 
@@ -126,7 +125,7 @@ open class CategoryMySQLGatewayTest {
         Assertions.assertEquals(expectedDescription, actualEntity.description)
         Assertions.assertEquals(expectedIsActive, actualEntity.isActive)
         Assertions.assertEquals(category.createdAt, actualEntity.createdAt)
-        Assertions.assertTrue(category.updatedAt.isBefore(actualCategory!!.updatedAt))
+        Assertions.assertTrue(category.updatedAt.isBefore(actualCategory.updatedAt))
         Assertions.assertEquals(category.deletedAt, actualEntity.deletedAt)
         Assertions.assertNull(actualEntity.deletedAt)
     }
