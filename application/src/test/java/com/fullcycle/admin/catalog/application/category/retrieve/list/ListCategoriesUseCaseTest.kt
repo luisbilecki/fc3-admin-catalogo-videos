@@ -41,11 +41,11 @@ class ListCategoriesUseCaseTest {
         val expectedSort = "createdAt"
         val expectedDirection = "asc"
         val aQuery = CategorySearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort, expectedDirection)
-        val expectedPagination = Pagination<Category>(expectedPage, expectedPerPage, categories.size.toLong(), categories)
+        val expectedPagination = Pagination(expectedPage, expectedPerPage, categories.size.toLong(), categories)
         val expectedItemsCount = 2
         val expectedResult = expectedPagination.map(CategoryListOutput::from)
 
-        `when`(categoryGateway!!.findAll(eq(aQuery)))
+        `when`(categoryGateway.findAll(eq(aQuery)))
                 .thenReturn(expectedPagination)
 
         val actualResult = useCase.execute(aQuery)

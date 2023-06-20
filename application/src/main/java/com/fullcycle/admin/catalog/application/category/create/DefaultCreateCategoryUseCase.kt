@@ -6,7 +6,6 @@ import com.fullcycle.admin.catalog.domain.validation.handler.Notification
 import com.fullcycle.admin.catalog.domain.validation.hasError
 import io.vavr.API.Left
 import io.vavr.control.Either
-import io.vavr.control.Either.Left
 import io.vavr.control.Try
 import java.util.*
 
@@ -18,10 +17,10 @@ class DefaultCreateCategoryUseCase(categoryGateway: CategoryGateway) : CreateCat
         this.categoryGateway = Objects.requireNonNull(categoryGateway)
     }
 
-    override fun execute(command: CreateCategoryCommand): Either<Notification, CreateCategoryOutput> {
-        val name = command.name
-        val description = command.description
-        val isActive = command.isActive
+    override fun execute(input: CreateCategoryCommand): Either<Notification, CreateCategoryOutput> {
+        val name = input.name
+        val description = input.description
+        val isActive = input.isActive
         val category = Category.newCategory(name, description, isActive)
         val notification = Notification.create()
 

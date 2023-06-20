@@ -87,7 +87,7 @@ class CreateCategoryUseCaseTest {
         `when`(categoryGateway.create(any()))
                 .thenAnswer(returnsFirstArg<Any>())
 
-        val actualOutput = useCase!!.execute(command).get()
+        val actualOutput = useCase.execute(command).get()
 
         Assertions.assertNotNull(actualOutput)
         Assertions.assertNotNull(actualOutput.id)

@@ -17,9 +17,9 @@ class Notification private constructor(private val errors: MutableList<Error>) :
         return this
     }
 
-    override fun validate(aValidation: Validation): Notification {
+    override fun validate(validation: Validation): Notification {
         try {
-            aValidation.validate()
+            validation.validate()
         } catch (ex: DomainException) {
             errors.addAll(ex.errors)
         } catch (t: Throwable) {

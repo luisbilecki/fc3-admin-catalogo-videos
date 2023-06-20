@@ -20,11 +20,11 @@ class DefaultUpdateCategoryUseCase(categoryGateway: CategoryGateway) : UpdateCat
         this.categoryGateway = Objects.requireNonNull(categoryGateway)
     }
 
-    override fun execute(command: UpdateCategoryCommand): Either<Notification, UpdateCategoryOutput> {
-        val id = CategoryID.from(command.id)
-        val name = command.name
-        val description = command.description
-        val isActive = command.isActive
+    override fun execute(input: UpdateCategoryCommand): Either<Notification, UpdateCategoryOutput> {
+        val id = CategoryID.from(input.id)
+        val name = input.name
+        val description = input.description
+        val isActive = input.isActive
         val category = categoryGateway.findById(id) ?: throw notFound(id)
         val notification = Notification.create()
 
