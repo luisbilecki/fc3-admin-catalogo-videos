@@ -152,4 +152,30 @@ open class CategoryMySQLGatewayTest {
 
         Assertions.assertEquals(0, categoryRepository.count())
     }
+
+    @Test
+    fun givenAPrePersistedCategoryAndValidCategoryId_whenCallsFindById_shouldReturnCategory() {
+        val expectedName = "Filmes"
+        val expectedDescription = "A categoria mais assistida"
+        val expectedIsActive = true
+        val category = Category.newCategory(expectedName, expectedDescription, expectedIsActive)
+
+        Assertions.assertEquals(0, categoryRepository.count())
+
+        categoryRepository.saveAndFlush(CategoryJpaEntity.from(category))
+
+        Assertions.assertEquals(1, categoryRepository.count())
+
+        val actualCategory = categoryGateway.findById(category.id).get()
+
+        Assertions.assertEquals(1, categoryRepository.count())
+        Assertions.assertEquals(category.id, actualCategory.getId())
+        Assertions.assertEquals(expectedName, actualCategory.getName())
+        Assertions.assertEquals(expectedDescription, actualCategory.getDescription())
+        Assertions.assertEquals(expectedIsActive, actualCategory.isActive())
+        Assertions.assertEquals(category.createdAt, actualCategory.getCreatedAt())
+        Assertions.assertTrue(category.updatedAt.isBefore(actualCategory.getUpdatedAt()))
+        Assertions.assertEquals(category.deletedAt, actualCategory.getDeletedAt())
+        Assertions.assertNull(actualCategory.getDeletedAt())
+    }
 }
