@@ -26,7 +26,7 @@ open class CategoryMySQLGatewayTest @Autowired constructor(
         val category = Category.newCategory(expectedName, expectedDescription, expectedIsActive)
         Assertions.assertEquals(0, categoryRepository.count())
 
-        val actualCategory = categoryGateway.create(category)
+        val actualCategory = categoryGateway.create(category)!!
 
         Assertions.assertEquals(1, categoryRepository.count())
         Assertions.assertEquals(category.id, actualCategory.id)
@@ -60,7 +60,7 @@ open class CategoryMySQLGatewayTest @Autowired constructor(
 
         Assertions.assertEquals(0, categoryRepository.count())
 
-        val actualCategory = categoryGateway.create(category)
+        val actualCategory = categoryGateway.create(category)!!
 
         Assertions.assertEquals(1, categoryRepository.count())
         Assertions.assertEquals(category.id, actualCategory.id)
@@ -103,7 +103,7 @@ open class CategoryMySQLGatewayTest @Autowired constructor(
 
         val aUpdatedCategory = Category.with(category).update(expectedName, expectedDescription, expectedIsActive)
 
-        val actualCategory = categoryGateway.update(aUpdatedCategory)
+        val actualCategory = categoryGateway.update(aUpdatedCategory)!!
 
         Assertions.assertEquals(1, categoryRepository.count())
         Assertions.assertEquals(category.id, actualCategory.id)

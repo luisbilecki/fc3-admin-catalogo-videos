@@ -18,7 +18,7 @@ import java.util.*
 @Service
 class CategoryMySQLGateway(private val repository: CategoryRepository) : CategoryGateway {
 
-    override fun create(category: Category) = save(category)
+    override fun create(category: Category?) = save(category)
 
     override fun deleteById(id: CategoryID) {
         val idToDelete = id.value
@@ -32,7 +32,7 @@ class CategoryMySQLGateway(private val repository: CategoryRepository) : Categor
         .map(CategoryJpaEntity::toAggregate)
         .orElse(null)
 
-    override fun update(category: Category) = save(category)
+    override fun update(category: Category?) = save(category)
 
     override fun findAll(query: CategorySearchQuery): Pagination<Category> {
         val page: PageRequest = PageRequest.of(
@@ -61,7 +61,12 @@ class CategoryMySQLGateway(private val repository: CategoryRepository) : Categor
         )
     }
 
-    private fun save(category: Category) = repository
-        .save(CategoryJpaEntity.from(category))
-        .toAggregate()
+    private fun save(category: Category?): Category? {
+        if (category == null) {
+            return null
+        }
+        return repository
+            .save(CategoryJpaEntity.from(category))
+            .toAggregate()
+    }
 }

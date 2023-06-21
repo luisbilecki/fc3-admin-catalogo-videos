@@ -1,7 +1,6 @@
 package com.fullcycle.admin.catalog.application.category.create
 
 import com.fullcycle.admin.catalog.domain.category.CategoryGateway
-import com.fullcycle.admin.catalog.domain.exceptions.DomainException
 import com.fullcycle.admin.catalog.domain.validation.firstError
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
