@@ -10,8 +10,8 @@ data class CreateCategoryOutput(val id: String) {
             return CreateCategoryOutput(id)
         }
 
-        fun from(category: Category): CreateCategoryOutput {
-            return CreateCategoryOutput(category.id.value)
+        fun from(category: Category?): CreateCategoryOutput {
+            return CreateCategoryOutput(category!!.id.value)
         }
     }
 }
