@@ -1,7 +1,7 @@
 package com.fullcycle.admin.catalog.infrastructure.category.persistence
 
 import com.fullcycle.admin.catalog.domain.category.Category
-import com.fullcycle.admin.catalog.infrastructure.MySQLGatewayTest
+import com.fullcycle.admin.catalog.MySQLGatewayTest
 import org.hibernate.PropertyValueException
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -9,10 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DataIntegrityViolationException
 
 @MySQLGatewayTest
-open class CategoryRepositoryTest {
-
-    @Autowired
-    private lateinit var categoryRepository: CategoryRepository
+open class CategoryRepositoryTest @Autowired constructor(
+    private val categoryRepository: CategoryRepository
+) {
 
     @Test
     fun givenAnInvalidNullName_whenCallsSave_shouldReturnError() {

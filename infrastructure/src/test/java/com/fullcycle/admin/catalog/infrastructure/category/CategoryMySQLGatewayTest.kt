@@ -3,7 +3,7 @@ package com.fullcycle.admin.catalog.infrastructure.category
 import com.fullcycle.admin.catalog.domain.category.Category
 import com.fullcycle.admin.catalog.domain.category.CategoryID
 import com.fullcycle.admin.catalog.domain.category.CategorySearchQuery
-import com.fullcycle.admin.catalog.infrastructure.MySQLGatewayTest
+import com.fullcycle.admin.catalog.MySQLGatewayTest
 import com.fullcycle.admin.catalog.infrastructure.category.persistence.CategoryJpaEntity
 import com.fullcycle.admin.catalog.infrastructure.category.persistence.CategoryRepository
 import org.junit.jupiter.api.Assertions
@@ -12,13 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired
 
 
 @MySQLGatewayTest
-open class CategoryMySQLGatewayTest {
-
-    @Autowired
-    private lateinit var categoryGateway: CategoryMySQLGateway
-
-    @Autowired
-    private lateinit var categoryRepository: CategoryRepository
+open class CategoryMySQLGatewayTest @Autowired constructor(
+    private val categoryGateway: CategoryMySQLGateway,
+    private val categoryRepository: CategoryRepository
+) {
 
     @Test
     fun givenAValidCategory_whenCallsCreate_shouldReturnANewCategory() {
