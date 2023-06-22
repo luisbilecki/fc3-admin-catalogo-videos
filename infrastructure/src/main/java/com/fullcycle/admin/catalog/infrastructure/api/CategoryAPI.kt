@@ -1,6 +1,7 @@
 package com.fullcycle.admin.catalog.infrastructure.api
 
 import com.fullcycle.admin.catalog.domain.pagination.Pagination
+import com.fullcycle.admin.catalog.infrastructure.category.models.CategoryAPIOutput
 import com.fullcycle.admin.catalog.infrastructure.category.models.CreateCategoryApiInput
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -40,4 +41,19 @@ interface CategoryAPI {
         @RequestParam(name = "sort", required = false, defaultValue = "name") sort: String?,
         @RequestParam(name = "dir", required = false, defaultValue = "asc") direction: String?
     ): Pagination<*>?
+
+    @GetMapping(
+        value = ["{id}"]
+    )
+    @Operation(summary = "Get a category by it's identifier")
+    @ApiResponses(
+        value = [ApiResponse(
+            responseCode = "200",
+            description = "Category retrieved successfully"
+        ), ApiResponse(responseCode = "404", description = "Category was not found"), ApiResponse(
+            responseCode = "500",
+            description = "An internal server error was thrown"
+        )]
+    )
+    fun getById(@PathVariable(name = "id") id: String): CategoryAPIOutput?
 }

@@ -38,7 +38,6 @@ class CategoryAPITest @Autowired constructor(
 ) {
 
     @Test
-    @Throws(Exception::class)
     fun givenAValidCommand_whenCallsCreateCategory_shouldReturnCategoryId() {
         val expectedName = "Filmes"
         val expectedDescription = "A categoria mais assistida"
@@ -68,7 +67,6 @@ class CategoryAPITest @Autowired constructor(
     }
 
     @Test
-    @Throws(java.lang.Exception::class)
     fun givenAInvalidName_whenCallsCreateCategory_thenShouldReturnNotification() {
         val expectedName: String? = null
         val expectedDescription = "A categoria mais assistida"
@@ -98,7 +96,6 @@ class CategoryAPITest @Autowired constructor(
     }
 
     @Test
-    @Throws(java.lang.Exception::class)
     fun givenAInvalidCommand_whenCallsCreateCategory_thenShouldReturnDomainException() {
         val expectedName: String? = null
         val expectedDescription = "A categoria mais assistida"
@@ -128,7 +125,6 @@ class CategoryAPITest @Autowired constructor(
     }
 
     @Test
-    @Throws(java.lang.Exception::class)
     fun givenAValidId_whenCallsGetCategory_shouldReturnCategory() {
         val expectedName = "Filmes"
         val expectedDescription = "A categoria mais assistida"
@@ -144,24 +140,34 @@ class CategoryAPITest @Autowired constructor(
             .andDo(print())
 
         response.andExpect(status().isOk())
+            .andExpect(header().string("Content-Type", MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id", equalTo(expectedId)))
             .andExpect(jsonPath("$.name", equalTo(expectedName)))
             .andExpect(jsonPath("$.description", equalTo(expectedDescription)))
             .andExpect(jsonPath("$.is_active", equalTo(expectedIsActive)))
             .andExpect(jsonPath("$.created_at", equalTo(category.createdAt.toString())))
             .andExpect(jsonPath("$.updated_at", equalTo(category.updatedAt.toString())))
-            .andExpect(jsonPath("$.deleted_at", equalTo(category.deletedAt.toString())))
+            .andExpect(jsonPath("$.deleted_at", equalTo(category.deletedAt)))
 
         verify(getCategoryByIdUseCase, times(1)).execute(eq(expectedId))
     }
 
     @Test
-    @Throws(java.lang.Exception::class)
     fun givenAInvalidId_whenCallsGetCategory_shouldReturnNotFound() {
         val expectedErrorMessage = "Category with ID 123 was not found"
         val expectedId = CategoryID.from("123").value
 
+        `when`(getCategoryByIdUseCase.execute(any()))
+            .thenThrow(
+                DomainException.with(
+                    Error(String.format("Category with ID %s was not found", expectedId))
+                )
+            )
+
         val request = get("/categories/{id}", expectedId)
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON)
+
         val response = mvc.perform(request)
             .andDo(print())
 
