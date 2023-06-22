@@ -4,6 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fullcycle.admin.catalog.ControllerTest
 import com.fullcycle.admin.catalog.application.category.create.CreateCategoryOutput
 import com.fullcycle.admin.catalog.application.category.create.CreateCategoryUseCase
+import com.fullcycle.admin.catalog.application.category.retrieve.get.CategoryOutput
+import com.fullcycle.admin.catalog.application.category.retrieve.get.GetCategoryByIdUseCase
+import com.fullcycle.admin.catalog.domain.category.Category
+import com.fullcycle.admin.catalog.domain.category.CategoryID
 import com.fullcycle.admin.catalog.domain.exceptions.DomainException
 import com.fullcycle.admin.catalog.domain.validation.Error
 import com.fullcycle.admin.catalog.domain.validation.handler.Notification
@@ -13,14 +17,12 @@ import io.vavr.API.Right
 import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.`when`
-import org.mockito.kotlin.any
-import org.mockito.kotlin.argThat
-import org.mockito.kotlin.times
-import org.mockito.kotlin.verify
+import org.mockito.kotlin.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
@@ -31,6 +33,7 @@ import java.util.*
 class CategoryAPITest @Autowired constructor(
     private val mvc: MockMvc,
     @MockBean val createCategoryUseCase: CreateCategoryUseCase,
+    @MockBean val getCategoryByIdUseCase: GetCategoryByIdUseCase,
     private val mapper: ObjectMapper
 ) {
 
@@ -122,5 +125,47 @@ class CategoryAPITest @Autowired constructor(
         verify(createCategoryUseCase, times(1)).execute(argThat { cmd ->
             expectedName == cmd.name && expectedDescription == cmd.description && expectedIsActive == cmd.isActive
         })
+    }
+
+    @Test
+    @Throws(java.lang.Exception::class)
+    fun givenAValidId_whenCallsGetCategory_shouldReturnCategory() {
+        val expectedName = "Filmes"
+        val expectedDescription = "A categoria mais assistida"
+        val expectedIsActive = true
+        val category = Category.newCategory(expectedName, expectedDescription, expectedIsActive)
+        val expectedId = category.id.value
+
+        `when`(getCategoryByIdUseCase.execute(any()))
+            .thenReturn(CategoryOutput.from(category))
+
+        val request = get("/categories/{id}", expectedId)
+        val response = mvc.perform(request)
+            .andDo(print())
+
+        response.andExpect(status().isOk())
+            .andExpect(jsonPath("$.id", equalTo(expectedId)))
+            .andExpect(jsonPath("$.name", equalTo(expectedName)))
+            .andExpect(jsonPath("$.description", equalTo(expectedDescription)))
+            .andExpect(jsonPath("$.is_active", equalTo(expectedIsActive)))
+            .andExpect(jsonPath("$.created_at", equalTo(category.createdAt.toString())))
+            .andExpect(jsonPath("$.updated_at", equalTo(category.updatedAt.toString())))
+            .andExpect(jsonPath("$.deleted_at", equalTo(category.deletedAt.toString())))
+
+        verify(getCategoryByIdUseCase, times(1)).execute(eq(expectedId))
+    }
+
+    @Test
+    @Throws(java.lang.Exception::class)
+    fun givenAInvalidId_whenCallsGetCategory_shouldReturnNotFound() {
+        val expectedErrorMessage = "Category with ID 123 was not found"
+        val expectedId = CategoryID.from("123").value
+
+        val request = get("/categories/{id}", expectedId)
+        val response = mvc.perform(request)
+            .andDo(print())
+
+        response.andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.message", equalTo(expectedErrorMessage)))
     }
 }
