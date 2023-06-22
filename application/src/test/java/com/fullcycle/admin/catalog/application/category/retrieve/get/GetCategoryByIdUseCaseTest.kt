@@ -3,7 +3,7 @@ package com.fullcycle.admin.catalog.application.category.retrieve.get
 import com.fullcycle.admin.catalog.domain.category.Category
 import com.fullcycle.admin.catalog.domain.category.CategoryGateway
 import com.fullcycle.admin.catalog.domain.category.CategoryID
-import com.fullcycle.admin.catalog.domain.exceptions.DomainException
+import com.fullcycle.admin.catalog.domain.exceptions.NotFoundException
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -23,6 +23,7 @@ class GetCategoryByIdUseCaseTest {
 
     @Mock
     private lateinit var categoryGateway: CategoryGateway
+
     @BeforeEach
     fun cleanUp() {
         Mockito.reset(categoryGateway)
@@ -37,7 +38,7 @@ class GetCategoryByIdUseCaseTest {
         val expectedId = category.id
 
         `when`(categoryGateway.findById(eq(expectedId)))
-                .thenReturn(Category.with(category))
+            .thenReturn(Category.with(category))
 
         val actualCategory = useCase.execute(expectedId.value)
 
@@ -56,10 +57,10 @@ class GetCategoryByIdUseCaseTest {
         val expectedId = CategoryID.from("123")
 
         `when`(categoryGateway.findById(eq(expectedId)))
-                .thenReturn(null)
+            .thenReturn(null)
 
         val actualException = Assertions.assertThrows(
-                DomainException::class.java
+            NotFoundException::class.java
         ) { useCase.execute(expectedId.value) }
 
         Assertions.assertEquals(expectedErrorMessage, actualException.message)
@@ -71,10 +72,10 @@ class GetCategoryByIdUseCaseTest {
         val expectedId = CategoryID.from("123")
 
         `when`(categoryGateway.findById(eq(expectedId)))
-                .thenThrow(IllegalStateException(expectedErrorMessage))
+            .thenThrow(IllegalStateException(expectedErrorMessage))
 
         val actualException = Assertions.assertThrows(
-                IllegalStateException::class.java
+            IllegalStateException::class.java
         ) { useCase.execute(expectedId.value) }
 
         Assertions.assertEquals(expectedErrorMessage, actualException.message)

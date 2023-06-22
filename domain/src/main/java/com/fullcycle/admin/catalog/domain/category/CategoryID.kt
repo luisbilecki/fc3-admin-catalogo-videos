@@ -3,7 +3,7 @@ package com.fullcycle.admin.catalog.domain.category
 import com.fullcycle.admin.catalog.domain.Identifier
 import java.util.*
 
-class CategoryID private constructor(val value: String) : Identifier() {
+class CategoryID private constructor(override val value: String) : Identifier() {
 
     companion object {
         fun unique() = from(UUID.randomUUID())

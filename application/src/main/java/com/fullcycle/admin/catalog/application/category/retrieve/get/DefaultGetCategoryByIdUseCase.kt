@@ -1,8 +1,10 @@
 package com.fullcycle.admin.catalog.application.category.retrieve.get
 
+import com.fullcycle.admin.catalog.domain.category.Category
 import com.fullcycle.admin.catalog.domain.category.CategoryGateway
 import com.fullcycle.admin.catalog.domain.category.CategoryID
 import com.fullcycle.admin.catalog.domain.exceptions.DomainException
+import com.fullcycle.admin.catalog.domain.exceptions.NotFoundException
 import com.fullcycle.admin.catalog.domain.validation.Error
 import java.util.*
 
@@ -22,8 +24,6 @@ class DefaultGetCategoryByIdUseCase(categoryGateway: CategoryGateway) : GetCateg
     }
 
     private fun notFound(id: CategoryID): DomainException {
-        return DomainException.with(
-                Error(String.format("Category with ID %s was not found", id.value))
-        )
+        return NotFoundException.with(Category::class.java, id)
     }
 }

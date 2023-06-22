@@ -9,6 +9,7 @@ import com.fullcycle.admin.catalog.application.category.retrieve.get.GetCategory
 import com.fullcycle.admin.catalog.domain.category.Category
 import com.fullcycle.admin.catalog.domain.category.CategoryID
 import com.fullcycle.admin.catalog.domain.exceptions.DomainException
+import com.fullcycle.admin.catalog.domain.exceptions.NotFoundException
 import com.fullcycle.admin.catalog.domain.validation.Error
 import com.fullcycle.admin.catalog.domain.validation.handler.Notification
 import com.fullcycle.admin.catalog.infrastructure.category.models.CreateCategoryApiInput
@@ -155,23 +156,20 @@ class CategoryAPITest @Autowired constructor(
     @Test
     fun givenAInvalidId_whenCallsGetCategory_shouldReturnNotFound() {
         val expectedErrorMessage = "Category with ID 123 was not found"
-        val expectedId = CategoryID.from("123").value
+        val expectedId = CategoryID.from("123")
 
         `when`(getCategoryByIdUseCase.execute(any()))
-            .thenThrow(
-                DomainException.with(
-                    Error(String.format("Category with ID %s was not found", expectedId))
-                )
-            )
+            .thenThrow(NotFoundException.with(Category::class.java, expectedId))
 
-        val request = get("/categories/{id}", expectedId)
+        val request = get("/categories/{id}", expectedId.value)
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON)
 
         val response = mvc.perform(request)
             .andDo(print())
 
-        response.andExpect(status().isNotFound())
+        response
+            .andExpect(status().isNotFound())
             .andExpect(jsonPath("$.message", equalTo(expectedErrorMessage)))
     }
 }
