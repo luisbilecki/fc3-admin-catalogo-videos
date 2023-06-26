@@ -25,7 +25,7 @@ class CategoryController(
     private val createCategoryUseCase: CreateCategoryUseCase,
     private val getCategoryByIdUseCase: GetCategoryByIdUseCase,
     private val updateCategoryUseCase: UpdateCategoryUseCase,
-    private val deleteCategoryUseCase: DeleteCategoryUseCase
+    private val deleteCategoryUseCase: DeleteCategoryUseCase,
 ) : CategoryAPI {
 
     override fun createCategory(input: CreateCategoryApiInput): ResponseEntity<*>? {

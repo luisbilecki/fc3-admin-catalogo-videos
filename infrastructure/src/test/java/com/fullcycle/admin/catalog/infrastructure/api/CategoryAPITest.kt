@@ -7,12 +7,15 @@ import com.fullcycle.admin.catalog.application.category.create.CreateCategoryUse
 import com.fullcycle.admin.catalog.application.category.delete.DeleteCategoryUseCase
 import com.fullcycle.admin.catalog.application.category.retrieve.get.CategoryOutput
 import com.fullcycle.admin.catalog.application.category.retrieve.get.GetCategoryByIdUseCase
+import com.fullcycle.admin.catalog.application.category.retrieve.list.CategoryListOutput
+import com.fullcycle.admin.catalog.application.category.retrieve.list.ListCategoriesUseCase
 import com.fullcycle.admin.catalog.application.category.update.UpdateCategoryOutput
 import com.fullcycle.admin.catalog.application.category.update.UpdateCategoryUseCase
 import com.fullcycle.admin.catalog.domain.category.Category
 import com.fullcycle.admin.catalog.domain.category.CategoryID
 import com.fullcycle.admin.catalog.domain.exceptions.DomainException
 import com.fullcycle.admin.catalog.domain.exceptions.NotFoundException
+import com.fullcycle.admin.catalog.domain.pagination.Pagination
 import com.fullcycle.admin.catalog.domain.validation.Error
 import com.fullcycle.admin.catalog.domain.validation.handler.Notification
 import com.fullcycle.admin.catalog.infrastructure.category.models.CreateCategoryApiInput
@@ -41,6 +44,7 @@ class CategoryAPITest @Autowired constructor(
     @MockBean val getCategoryByIdUseCase: GetCategoryByIdUseCase,
     @MockBean val updateCategoryUseCase: UpdateCategoryUseCase,
     @MockBean val deleteCategoryUseCase: DeleteCategoryUseCase,
+    @MockBean val listCategoriesUseCase: ListCategoriesUseCase,
     private val mapper: ObjectMapper
 ) {
 
@@ -180,7 +184,6 @@ class CategoryAPITest @Autowired constructor(
     }
 
     @Test
-    @Throws(Exception::class)
     fun givenAValidCommand_whenCallsUpdateCategory_shouldReturnCategoryId() {
         val expectedId = "123"
         val expectedName = "Filmes"
@@ -284,5 +287,49 @@ class CategoryAPITest @Autowired constructor(
         response.andExpect(status().isNoContent())
 
         verify(deleteCategoryUseCase, times(1)).execute(eq(expectedId))
+    }
+
+    @Test
+    fun givenValidParams_whenCallsListCategories_shouldReturnCategories() {
+        val category = Category.newCategory("Movies", null, true)
+        val expectedPage = 0
+        val expectedPerPage = 10
+        val expectedTerms = "movies"
+        val expectedSort = "description"
+        val expectedDirection = "desc"
+        val expectedItemsCount = 1
+        val expectedTotal = 1
+        val expectedItems = listOf(CategoryListOutput.from(category))
+
+        `when`(listCategoriesUseCase.execute(any()))
+            .thenReturn(Pagination(expectedPage, expectedPerPage, expectedTotal.toLong(), expectedItems))
+
+        val request = get("/categories")
+            .queryParam("page", expectedPage.toString())
+            .queryParam("perPage", expectedPerPage.toString())
+            .queryParam("sort", expectedSort)
+            .queryParam("dir", expectedDirection)
+            .queryParam("search", expectedTerms)
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON)
+
+        val response = mvc.perform(request)
+            .andDo(print())
+
+        response.andExpect(status().isOk())
+            .andExpect(jsonPath("$.current_page", equalTo(expectedPage)))
+            .andExpect(jsonPath("$.per_page", equalTo(expectedPerPage)))
+            .andExpect(jsonPath("$.total", equalTo(expectedTotal)))
+            .andExpect(jsonPath("$.items", hasSize<Int>(expectedItemsCount)))
+            .andExpect(jsonPath("$.items[0].id", equalTo(category.id.value)))
+            .andExpect(jsonPath("$.items[0].name", equalTo(category.name)))
+            .andExpect(jsonPath("$.items[0].description", equalTo(category.description)))
+            .andExpect(jsonPath("$.items[0].is_active", equalTo(category.isActive)))
+            .andExpect(jsonPath("$.items[0].created_at", equalTo(category.createdAt.toString())))
+            .andExpect(jsonPath("$.items[0].updated_at", equalTo(category.updatedAt.toString())))
+            .andExpect(jsonPath("$.items[0].deleted_at", equalTo(category.deletedAt)))
+        verify(listCategoriesUseCase, times(1)).execute(argThat { query ->
+            expectedPage == query.page && expectedPerPage == query.perPage && expectedDirection == query.direction && expectedSort == query.sort && expectedTerms == query.terms
+        })
     }
 }
