@@ -6,6 +6,8 @@ import com.fullcycle.admin.catalog.application.category.create.CreateCategoryOut
 import com.fullcycle.admin.catalog.application.category.create.CreateCategoryUseCase
 import com.fullcycle.admin.catalog.application.category.retrieve.get.CategoryOutput
 import com.fullcycle.admin.catalog.application.category.retrieve.get.GetCategoryByIdUseCase
+import com.fullcycle.admin.catalog.application.category.update.UpdateCategoryOutput
+import com.fullcycle.admin.catalog.application.category.update.UpdateCategoryUseCase
 import com.fullcycle.admin.catalog.domain.category.Category
 import com.fullcycle.admin.catalog.domain.category.CategoryID
 import com.fullcycle.admin.catalog.domain.exceptions.DomainException
@@ -13,6 +15,7 @@ import com.fullcycle.admin.catalog.domain.exceptions.NotFoundException
 import com.fullcycle.admin.catalog.domain.validation.Error
 import com.fullcycle.admin.catalog.domain.validation.handler.Notification
 import com.fullcycle.admin.catalog.infrastructure.category.models.CreateCategoryApiInput
+import com.fullcycle.admin.catalog.infrastructure.category.models.UpdateCategoryAPIInput
 import io.vavr.API.Left
 import io.vavr.API.Right
 import org.hamcrest.Matchers.*
@@ -23,8 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import java.util.*
@@ -35,6 +37,7 @@ class CategoryAPITest @Autowired constructor(
     private val mvc: MockMvc,
     @MockBean val createCategoryUseCase: CreateCategoryUseCase,
     @MockBean val getCategoryByIdUseCase: GetCategoryByIdUseCase,
+    @MockBean val updateCategoryUseCase: UpdateCategoryUseCase,
     private val mapper: ObjectMapper
 ) {
 
@@ -171,5 +174,32 @@ class CategoryAPITest @Autowired constructor(
         response
             .andExpect(status().isNotFound())
             .andExpect(jsonPath("$.message", equalTo(expectedErrorMessage)))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun givenAValidCommand_whenCallsUpdateCategory_shouldReturnCategoryId() {
+        val expectedId = "123"
+        val expectedName = "Filmes"
+        val expectedDescription = "A categoria mais assistida"
+        val expectedIsActive = true
+
+        `when`(updateCategoryUseCase.execute(any()))
+            .thenReturn(Right(UpdateCategoryOutput.from(expectedId)))
+
+        val command = UpdateCategoryAPIInput(expectedName, expectedDescription, expectedIsActive)
+
+        val request = put("/categories/{id}", expectedId)
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(mapper.writeValueAsString(command))
+        val response = mvc.perform(request)
+            .andDo(print())
+
+        response.andExpect(status().isNoContent())
+            .andExpect(header().string("Content-Type", MediaType.APPLICATION_JSON_VALUE))
+        verify(updateCategoryUseCase, times(1)).execute(argThat { cmd ->
+            expectedName == cmd.name && expectedDescription == cmd.description && expectedIsActive == cmd.isActive
+        })
     }
 }

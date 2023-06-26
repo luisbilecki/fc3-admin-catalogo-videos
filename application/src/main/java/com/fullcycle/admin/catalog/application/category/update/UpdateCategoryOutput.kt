@@ -1,15 +1,17 @@
 package com.fullcycle.admin.catalog.application.category.update
 
 import com.fullcycle.admin.catalog.domain.category.Category
-import com.fullcycle.admin.catalog.domain.category.CategoryID
 
 
-data class UpdateCategoryOutput(val id: CategoryID) {
+data class UpdateCategoryOutput(val id: String) {
 
     companion object {
+        fun from(id: String?): UpdateCategoryOutput? {
+            return UpdateCategoryOutput(id!!)
+        }
 
         fun from(category: Category?): UpdateCategoryOutput {
-            return UpdateCategoryOutput(category!!.id)
+            return UpdateCategoryOutput(category!!.id.value)
         }
     }
 }
