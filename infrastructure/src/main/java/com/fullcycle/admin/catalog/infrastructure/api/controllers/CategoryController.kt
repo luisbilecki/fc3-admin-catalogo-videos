@@ -5,6 +5,7 @@ import com.fullcycle.admin.catalog.application.category.create.CreateCategoryOut
 import com.fullcycle.admin.catalog.application.category.create.CreateCategoryUseCase
 import com.fullcycle.admin.catalog.application.category.delete.DeleteCategoryUseCase
 import com.fullcycle.admin.catalog.application.category.retrieve.get.GetCategoryByIdUseCase
+import com.fullcycle.admin.catalog.application.category.retrieve.list.CategoryListOutput
 import com.fullcycle.admin.catalog.application.category.retrieve.list.ListCategoriesUseCase
 import com.fullcycle.admin.catalog.application.category.update.UpdateCategoryCommand
 import com.fullcycle.admin.catalog.application.category.update.UpdateCategoryOutput
@@ -13,8 +14,9 @@ import com.fullcycle.admin.catalog.domain.category.CategorySearchQuery
 import com.fullcycle.admin.catalog.domain.pagination.Pagination
 import com.fullcycle.admin.catalog.domain.validation.handler.Notification
 import com.fullcycle.admin.catalog.infrastructure.api.CategoryAPI
+import com.fullcycle.admin.catalog.infrastructure.category.models.CategoryListResponse
 import com.fullcycle.admin.catalog.infrastructure.category.models.CreateCategoryApiInput
-import com.fullcycle.admin.catalog.infrastructure.category.models.UpdateCategoryAPIInput
+import com.fullcycle.admin.catalog.infrastructure.category.models.UpdateCategoryRequest
 import com.fullcycle.admin.catalog.infrastructure.category.presenters.CategoryAPIPresenter
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
@@ -58,14 +60,18 @@ class CategoryController(
         perPage: Int,
         sort: String?,
         direction: String?
-    ): Pagination<*>? {
-        return listCategoriesUseCase
-            .execute(CategorySearchQuery(page, perPage, search!!, sort!!, direction!!))
+    ): Pagination<CategoryListResponse?> {
+        return listCategoriesUseCase.execute(
+            CategorySearchQuery(
+                page, perPage,
+                search!!, sort!!, direction!!
+            )
+        ).map(CategoryAPIPresenter::present)
     }
 
     override fun getById(id: String) = CategoryAPIPresenter.present(getCategoryByIdUseCase.execute(id))
 
-    override fun updateById(id: String?, input: UpdateCategoryAPIInput): ResponseEntity<*>? {
+    override fun updateById(id: String?, input: UpdateCategoryRequest): ResponseEntity<*>? {
         val command = UpdateCategoryCommand.with(
             id!!,
             input.name,

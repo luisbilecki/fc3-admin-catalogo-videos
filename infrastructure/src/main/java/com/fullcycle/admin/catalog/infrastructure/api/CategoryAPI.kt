@@ -1,9 +1,9 @@
 package com.fullcycle.admin.catalog.infrastructure.api
 
 import com.fullcycle.admin.catalog.domain.pagination.Pagination
-import com.fullcycle.admin.catalog.infrastructure.category.models.CategoryAPIOutput
+import com.fullcycle.admin.catalog.infrastructure.category.models.CategoryResponse
 import com.fullcycle.admin.catalog.infrastructure.category.models.CreateCategoryApiInput
-import com.fullcycle.admin.catalog.infrastructure.category.models.UpdateCategoryAPIInput
+import com.fullcycle.admin.catalog.infrastructure.category.models.UpdateCategoryRequest
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
@@ -57,7 +57,7 @@ interface CategoryAPI {
             description = "An internal server error was thrown"
         )]
     )
-    fun getById(@PathVariable(name = "id") id: String): CategoryAPIOutput?
+    fun getById(@PathVariable(name = "id") id: String): CategoryResponse?
 
     @PutMapping(
         value = ["{id}"],
@@ -76,7 +76,7 @@ interface CategoryAPI {
     )
     fun updateById(
         @PathVariable(name = "id") id: String?,
-        @RequestBody input: UpdateCategoryAPIInput
+        @RequestBody input: UpdateCategoryRequest
     ): ResponseEntity<*>?
 
     @DeleteMapping(

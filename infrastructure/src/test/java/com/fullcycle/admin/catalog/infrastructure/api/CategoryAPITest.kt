@@ -19,7 +19,7 @@ import com.fullcycle.admin.catalog.domain.pagination.Pagination
 import com.fullcycle.admin.catalog.domain.validation.Error
 import com.fullcycle.admin.catalog.domain.validation.handler.Notification
 import com.fullcycle.admin.catalog.infrastructure.category.models.CreateCategoryApiInput
-import com.fullcycle.admin.catalog.infrastructure.category.models.UpdateCategoryAPIInput
+import com.fullcycle.admin.catalog.infrastructure.category.models.UpdateCategoryRequest
 import io.vavr.API.Left
 import io.vavr.API.Right
 import org.hamcrest.Matchers.*
@@ -193,7 +193,7 @@ class CategoryAPITest @Autowired constructor(
         `when`(updateCategoryUseCase.execute(any()))
             .thenReturn(Right(UpdateCategoryOutput.from(expectedId)))
 
-        val command = UpdateCategoryAPIInput(expectedName, expectedDescription, expectedIsActive)
+        val command = UpdateCategoryRequest(expectedName, expectedDescription, expectedIsActive)
 
         val request = put("/categories/{id}", expectedId)
             .accept(MediaType.APPLICATION_JSON)
@@ -222,7 +222,7 @@ class CategoryAPITest @Autowired constructor(
         `when`(updateCategoryUseCase.execute(any()))
             .thenReturn(Left(Notification.create(java.lang.Error(expectedMessage))))
 
-        val command = UpdateCategoryAPIInput(expectedName, expectedDescription, expectedIsActive)
+        val command = UpdateCategoryRequest(expectedName, expectedDescription, expectedIsActive)
 
         val request = put("/categories/{id}", expectedId)
             .accept(MediaType.APPLICATION_JSON)
@@ -253,7 +253,7 @@ class CategoryAPITest @Autowired constructor(
         `when`(updateCategoryUseCase.execute(any()))
             .thenThrow(NotFoundException.with(Category::class.java, CategoryID.from(expectedId)))
 
-        val command = UpdateCategoryAPIInput(expectedName, expectedDescription, expectedIsActive)
+        val command = UpdateCategoryRequest(expectedName, expectedDescription, expectedIsActive)
 
         val request = put("/categories/{id}", expectedId)
             .accept(MediaType.APPLICATION_JSON)
@@ -326,7 +326,6 @@ class CategoryAPITest @Autowired constructor(
             .andExpect(jsonPath("$.items[0].description", equalTo(category.description)))
             .andExpect(jsonPath("$.items[0].is_active", equalTo(category.isActive)))
             .andExpect(jsonPath("$.items[0].created_at", equalTo(category.createdAt.toString())))
-            .andExpect(jsonPath("$.items[0].updated_at", equalTo(category.updatedAt.toString())))
             .andExpect(jsonPath("$.items[0].deleted_at", equalTo(category.deletedAt)))
         verify(listCategoriesUseCase, times(1)).execute(argThat { query ->
             expectedPage == query.page && expectedPerPage == query.perPage && expectedDirection == query.direction && expectedSort == query.sort && expectedTerms == query.terms
