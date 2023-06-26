@@ -196,8 +196,71 @@ class CategoryAPITest @Autowired constructor(
         val response = mvc.perform(request)
             .andDo(print())
 
-        response.andExpect(status().isNoContent())
+        response.andExpect(status().isOk())
             .andExpect(header().string("Content-Type", MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(jsonPath("$.id", equalTo(expectedId)))
+        verify(updateCategoryUseCase, times(1)).execute(argThat { cmd ->
+            expectedName == cmd.name && expectedDescription == cmd.description && expectedIsActive == cmd.isActive
+        })
+    }
+
+    @Test
+    fun givenAInvalidName_whenCallsUpdateCategory_thenShouldReturnDomainException() {
+        val expectedId = "123"
+        val expectedName = "Filmes"
+        val expectedDescription = "A categoria mais assistida"
+        val expectedIsActive = true
+        val expectedErrorCount = 1
+        val expectedMessage = "'name' should not be null"
+
+        `when`(updateCategoryUseCase.execute(any()))
+            .thenReturn(Left(Notification.create(java.lang.Error(expectedMessage))))
+
+        val command = UpdateCategoryAPIInput(expectedName, expectedDescription, expectedIsActive)
+
+        val request = put("/categories/{id}", expectedId)
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(mapper.writeValueAsString(command))
+
+        val response = mvc.perform(request)
+            .andDo(print())
+
+        response.andExpect(status().isUnprocessableEntity())
+            .andExpect(header().string("Content-Type", MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(jsonPath("$.errors", hasSize<Error>(expectedErrorCount)))
+            .andExpect(jsonPath("$.errors[0].message", equalTo(expectedMessage)))
+
+        verify(updateCategoryUseCase, times(1)).execute(argThat { cmd ->
+            expectedName == cmd.name && expectedDescription == cmd.description && expectedIsActive == cmd.isActive
+        })
+    }
+
+    @Test
+    fun givenACommandWithInvalidID_whenCallsUpdateCategory_shouldReturnNotFoundException() {
+        val expectedId = "not-found"
+        val expectedName = "Filmes"
+        val expectedDescription = "A categoria mais assistida"
+        val expectedIsActive = true
+        val expectedErrorMessage = "Category with ID not-found was not found"
+
+        `when`(updateCategoryUseCase.execute(any()))
+            .thenThrow(NotFoundException.with(Category::class.java, CategoryID.from(expectedId)))
+
+        val command = UpdateCategoryAPIInput(expectedName, expectedDescription, expectedIsActive)
+
+        val request = put("/categories/{id}", expectedId)
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(mapper.writeValueAsString(command))
+
+        val response = mvc.perform(request)
+            .andDo(print())
+
+        response.andExpect(status().isNotFound())
+            .andExpect(header().string("Content-Type", MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(jsonPath("$.message", equalTo(expectedErrorMessage)))
+
         verify(updateCategoryUseCase, times(1)).execute(argThat { cmd ->
             expectedName == cmd.name && expectedDescription == cmd.description && expectedIsActive == cmd.isActive
         })
