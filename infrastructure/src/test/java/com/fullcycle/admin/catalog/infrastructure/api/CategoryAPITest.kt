@@ -270,7 +270,7 @@ class CategoryAPITest @Autowired constructor(
     }
 
     @Test
-    fun givenAValidId_whenCallsDeleteCategory_shouldBeOK() {
+    fun givenAValidId_whenCallsDeleteCategory_shouldReturnNoContent() {
         val expectedId = "123"
         doNothing()
             .`when`(deleteCategoryUseCase).execute(any())
@@ -281,8 +281,7 @@ class CategoryAPITest @Autowired constructor(
         val response = mvc.perform(request)
             .andDo(print())
 
-        response.andExpect(status().isNotFound())
-            .andExpect(header().string("Content-Type", MediaType.APPLICATION_JSON_VALUE))
+        response.andExpect(status().isNoContent())
 
         verify(deleteCategoryUseCase, times(1)).execute(eq(expectedId))
     }

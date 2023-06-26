@@ -3,6 +3,7 @@ package com.fullcycle.admin.catalog.infrastructure.api.controllers
 import com.fullcycle.admin.catalog.application.category.create.CreateCategoryCommand
 import com.fullcycle.admin.catalog.application.category.create.CreateCategoryOutput
 import com.fullcycle.admin.catalog.application.category.create.CreateCategoryUseCase
+import com.fullcycle.admin.catalog.application.category.delete.DeleteCategoryUseCase
 import com.fullcycle.admin.catalog.application.category.retrieve.get.GetCategoryByIdUseCase
 import com.fullcycle.admin.catalog.application.category.update.UpdateCategoryCommand
 import com.fullcycle.admin.catalog.application.category.update.UpdateCategoryOutput
@@ -23,7 +24,8 @@ import java.util.function.Function
 class CategoryController(
     private val createCategoryUseCase: CreateCategoryUseCase,
     private val getCategoryByIdUseCase: GetCategoryByIdUseCase,
-    private val updateCategoryUseCase: UpdateCategoryUseCase
+    private val updateCategoryUseCase: UpdateCategoryUseCase,
+    private val deleteCategoryUseCase: DeleteCategoryUseCase
 ) : CategoryAPI {
 
     override fun createCategory(input: CreateCategoryApiInput): ResponseEntity<*>? {
@@ -81,5 +83,9 @@ class CategoryController(
 
         return updateCategoryUseCase.execute(command)
             .fold(onError, onSuccess)
+    }
+
+    override fun deleteById(id: String) {
+        deleteCategoryUseCase.execute(id)
     }
 }
