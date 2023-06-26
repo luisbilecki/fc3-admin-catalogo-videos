@@ -1,6 +1,8 @@
 package com.fullcycle.admin.catalog
 
+import com.fullcycle.admin.catalog.infrastructure.configuration.ObjectMapperConfig
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.context.annotation.Import
 
 import org.springframework.core.annotation.AliasFor
 
@@ -14,6 +16,7 @@ import kotlin.reflect.KClass
 @Inherited
 @ActiveProfiles("test")
 @WebMvcTest
+@Import(ObjectMapperConfig::class)
 annotation class ControllerTest(
 
     @get:AliasFor(

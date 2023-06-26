@@ -5,9 +5,11 @@ import com.fullcycle.admin.catalog.application.category.create.CreateCategoryOut
 import com.fullcycle.admin.catalog.application.category.create.CreateCategoryUseCase
 import com.fullcycle.admin.catalog.application.category.delete.DeleteCategoryUseCase
 import com.fullcycle.admin.catalog.application.category.retrieve.get.GetCategoryByIdUseCase
+import com.fullcycle.admin.catalog.application.category.retrieve.list.ListCategoriesUseCase
 import com.fullcycle.admin.catalog.application.category.update.UpdateCategoryCommand
 import com.fullcycle.admin.catalog.application.category.update.UpdateCategoryOutput
 import com.fullcycle.admin.catalog.application.category.update.UpdateCategoryUseCase
+import com.fullcycle.admin.catalog.domain.category.CategorySearchQuery
 import com.fullcycle.admin.catalog.domain.pagination.Pagination
 import com.fullcycle.admin.catalog.domain.validation.handler.Notification
 import com.fullcycle.admin.catalog.infrastructure.api.CategoryAPI
@@ -26,6 +28,7 @@ class CategoryController(
     private val getCategoryByIdUseCase: GetCategoryByIdUseCase,
     private val updateCategoryUseCase: UpdateCategoryUseCase,
     private val deleteCategoryUseCase: DeleteCategoryUseCase,
+    private val listCategoriesUseCase: ListCategoriesUseCase
 ) : CategoryAPI {
 
     override fun createCategory(input: CreateCategoryApiInput): ResponseEntity<*>? {
@@ -56,7 +59,8 @@ class CategoryController(
         sort: String?,
         direction: String?
     ): Pagination<*>? {
-        return null
+        return listCategoriesUseCase
+            .execute(CategorySearchQuery(page, perPage, search!!, sort!!, direction!!))
     }
 
     override fun getById(id: String) = CategoryAPIPresenter.present(getCategoryByIdUseCase.execute(id))
