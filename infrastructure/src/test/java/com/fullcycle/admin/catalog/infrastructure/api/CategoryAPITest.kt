@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fullcycle.admin.catalog.ControllerTest
 import com.fullcycle.admin.catalog.application.category.create.CreateCategoryOutput
 import com.fullcycle.admin.catalog.application.category.create.CreateCategoryUseCase
+import com.fullcycle.admin.catalog.application.category.delete.DeleteCategoryUseCase
 import com.fullcycle.admin.catalog.application.category.retrieve.get.CategoryOutput
 import com.fullcycle.admin.catalog.application.category.retrieve.get.GetCategoryByIdUseCase
 import com.fullcycle.admin.catalog.application.category.update.UpdateCategoryOutput
@@ -20,6 +21,7 @@ import io.vavr.API.Left
 import io.vavr.API.Right
 import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.Test
+import org.mockito.Mockito.doNothing
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.*
 import org.springframework.beans.factory.annotation.Autowired
@@ -38,6 +40,7 @@ class CategoryAPITest @Autowired constructor(
     @MockBean val createCategoryUseCase: CreateCategoryUseCase,
     @MockBean val getCategoryByIdUseCase: GetCategoryByIdUseCase,
     @MockBean val updateCategoryUseCase: UpdateCategoryUseCase,
+    @MockBean val deleteCategoryUseCase: DeleteCategoryUseCase,
     private val mapper: ObjectMapper
 ) {
 
@@ -264,5 +267,23 @@ class CategoryAPITest @Autowired constructor(
         verify(updateCategoryUseCase, times(1)).execute(argThat { cmd ->
             expectedName == cmd.name && expectedDescription == cmd.description && expectedIsActive == cmd.isActive
         })
+    }
+
+    @Test
+    fun givenAValidId_whenCallsDeleteCategory_shouldBeOK() {
+        val expectedId = "123"
+        doNothing()
+            .`when`(deleteCategoryUseCase).execute(any())
+
+        val request = delete("/categories/{id}", expectedId)
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON)
+        val response = mvc.perform(request)
+            .andDo(print())
+
+        response.andExpect(status().isNotFound())
+            .andExpect(header().string("Content-Type", MediaType.APPLICATION_JSON_VALUE))
+
+        verify(deleteCategoryUseCase, times(1)).execute(eq(expectedId))
     }
 }
