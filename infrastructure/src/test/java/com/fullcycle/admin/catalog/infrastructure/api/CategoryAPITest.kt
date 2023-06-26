@@ -18,7 +18,7 @@ import com.fullcycle.admin.catalog.domain.exceptions.NotFoundException
 import com.fullcycle.admin.catalog.domain.pagination.Pagination
 import com.fullcycle.admin.catalog.domain.validation.Error
 import com.fullcycle.admin.catalog.domain.validation.handler.Notification
-import com.fullcycle.admin.catalog.infrastructure.category.models.CreateCategoryApiInput
+import com.fullcycle.admin.catalog.infrastructure.category.models.CreateCategoryRequest
 import com.fullcycle.admin.catalog.infrastructure.category.models.UpdateCategoryRequest
 import io.vavr.API.Left
 import io.vavr.API.Right
@@ -54,7 +54,7 @@ class CategoryAPITest @Autowired constructor(
         val expectedDescription = "A categoria mais assistida"
         val expectedIsActive = true
 
-        val input = CreateCategoryApiInput(expectedName, expectedDescription, expectedIsActive)
+        val input = CreateCategoryRequest(expectedName, expectedDescription, expectedIsActive)
 
         `when`(createCategoryUseCase.execute(any()))
             .thenReturn(Right(CreateCategoryOutput.from("123")))
@@ -84,7 +84,7 @@ class CategoryAPITest @Autowired constructor(
         val expectedIsActive = true
         val expectedMessage = "'name' should not be null"
 
-        val input = CreateCategoryApiInput(expectedName, expectedDescription, expectedIsActive)
+        val input = CreateCategoryRequest(expectedName, expectedDescription, expectedIsActive)
 
         `when`(createCategoryUseCase.execute(any()))
             .thenReturn(Left(Notification.create(Error(expectedMessage))))
@@ -112,7 +112,7 @@ class CategoryAPITest @Autowired constructor(
         val expectedDescription = "A categoria mais assistida"
         val expectedIsActive = true
         val expectedMessage = "'name' should not be null"
-        val input = CreateCategoryApiInput(expectedName, expectedDescription, expectedIsActive)
+        val input = CreateCategoryRequest(expectedName, expectedDescription, expectedIsActive)
 
         `when`(createCategoryUseCase.execute(any()))
             .thenThrow(DomainException.with(Error(expectedMessage)))

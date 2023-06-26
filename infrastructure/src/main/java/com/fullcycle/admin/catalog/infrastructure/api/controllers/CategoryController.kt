@@ -15,7 +15,7 @@ import com.fullcycle.admin.catalog.domain.pagination.Pagination
 import com.fullcycle.admin.catalog.domain.validation.handler.Notification
 import com.fullcycle.admin.catalog.infrastructure.api.CategoryAPI
 import com.fullcycle.admin.catalog.infrastructure.category.models.CategoryListResponse
-import com.fullcycle.admin.catalog.infrastructure.category.models.CreateCategoryApiInput
+import com.fullcycle.admin.catalog.infrastructure.category.models.CreateCategoryRequest
 import com.fullcycle.admin.catalog.infrastructure.category.models.UpdateCategoryRequest
 import com.fullcycle.admin.catalog.infrastructure.category.presenters.CategoryAPIPresenter
 import org.springframework.http.ResponseEntity
@@ -33,7 +33,7 @@ class CategoryController(
     private val listCategoriesUseCase: ListCategoriesUseCase
 ) : CategoryAPI {
 
-    override fun createCategory(input: CreateCategoryApiInput): ResponseEntity<*>? {
+    override fun createCategory(input: CreateCategoryRequest): ResponseEntity<*>? {
         val command = CreateCategoryCommand.with(
             input.name,
             input.description,
