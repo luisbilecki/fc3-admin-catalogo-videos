@@ -27,7 +27,7 @@ class Category private constructor(
                 id: CategoryID,
                 name: String?,
                 description: String?,
-                active: Boolean,
+                isActive: Boolean,
                 createdAt: Instant?,
                 updatedAt: Instant?,
                 deletedAt: Instant?
@@ -35,7 +35,7 @@ class Category private constructor(
                 id,
                 name,
                 description,
-                active,
+            isActive,
                 createdAt!!,
                 updatedAt!!,
                 deletedAt

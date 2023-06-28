@@ -3,7 +3,7 @@ package com.fullcycle.admin.catalog.application.category.update
 import com.fullcycle.admin.catalog.IntegrationTest
 import com.fullcycle.admin.catalog.domain.category.Category
 import com.fullcycle.admin.catalog.domain.category.CategoryGateway
-import com.fullcycle.admin.catalog.domain.exceptions.DomainException
+import com.fullcycle.admin.catalog.domain.exceptions.NotFoundException
 import com.fullcycle.admin.catalog.domain.validation.firstError
 import com.fullcycle.admin.catalog.infrastructure.category.persistence.CategoryJpaEntity
 import com.fullcycle.admin.catalog.infrastructure.category.persistence.CategoryRepository
@@ -157,7 +157,6 @@ class UpdateCategoryUseCaseIT @Autowired constructor(
         val expectedDescription = "A categoria mais assistida"
         val expectedIsActive = false
         val expectedId = "123"
-        val expectedErrorCount = 1
         val expectedErrorMessage = "Category with ID 123 was not found"
         val command = UpdateCategoryCommand.with(
             expectedId,
@@ -166,10 +165,9 @@ class UpdateCategoryUseCaseIT @Autowired constructor(
             expectedIsActive
         )
 
-        val actualException = Assertions.assertThrows(DomainException::class.java) { useCase.execute(command) }
+        val actualException = Assertions.assertThrows(NotFoundException::class.java) { useCase.execute(command) }
 
-        Assertions.assertEquals(expectedErrorCount, actualException.errors.size)
-        Assertions.assertEquals(expectedErrorMessage, actualException.errors.first().message)
+        Assertions.assertEquals(expectedErrorMessage, actualException.message)
     }
 
     private fun save(vararg aCategory: Category) {

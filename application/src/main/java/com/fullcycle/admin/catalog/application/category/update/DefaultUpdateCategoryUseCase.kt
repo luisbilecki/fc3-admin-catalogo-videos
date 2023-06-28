@@ -4,6 +4,7 @@ import com.fullcycle.admin.catalog.domain.category.Category
 import com.fullcycle.admin.catalog.domain.category.CategoryGateway
 import com.fullcycle.admin.catalog.domain.category.CategoryID
 import com.fullcycle.admin.catalog.domain.exceptions.DomainException
+import com.fullcycle.admin.catalog.domain.exceptions.NotFoundException
 import com.fullcycle.admin.catalog.domain.validation.Error
 import com.fullcycle.admin.catalog.domain.validation.handler.Notification
 import com.fullcycle.admin.catalog.domain.validation.hasError
@@ -41,9 +42,5 @@ class DefaultUpdateCategoryUseCase(categoryGateway: CategoryGateway) : UpdateCat
                 .bimap(Notification::create, UpdateCategoryOutput::from)
     }
 
-    private fun notFound(id: CategoryID): DomainException {
-        return DomainException.with(
-            Error(String.format("Category with ID %s was not found", id.value))
-        )
-    }
+    private fun notFound(id: CategoryID) = NotFoundException.with(Category::class.java, id)
 }
