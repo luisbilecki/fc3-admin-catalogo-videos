@@ -3,7 +3,7 @@ package com.fullcycle.admin.catalog.application.category.update
 import com.fullcycle.admin.catalog.domain.category.Category
 import com.fullcycle.admin.catalog.domain.category.CategoryGateway
 import com.fullcycle.admin.catalog.domain.category.CategoryID
-import com.fullcycle.admin.catalog.domain.exceptions.DomainException
+import com.fullcycle.admin.catalog.domain.exceptions.NotFoundException
 import com.fullcycle.admin.catalog.domain.validation.firstError
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -169,7 +169,6 @@ class UpdateCategoryUseCaseTest {
         val expectedDescription = "A categoria mais assistida"
         val expectedIsActive = false
         val expectedId = "123"
-        val expectedErrorCount = 1
         val expectedErrorMessage = "Category with ID 123 was not found"
         val command = UpdateCategoryCommand.with(
                 expectedId,
@@ -181,10 +180,9 @@ class UpdateCategoryUseCaseTest {
         `when`(categoryGateway.findById(eq(CategoryID.from(expectedId))))
                 .thenReturn(null)
 
-        val actualException = Assertions.assertThrows(DomainException::class.java) { useCase.execute(command) }
+        val actualException = Assertions.assertThrows(NotFoundException::class.java) { useCase.execute(command) }
 
-        Assertions.assertEquals(expectedErrorCount, actualException.errors.size)
-        Assertions.assertEquals(expectedErrorMessage, actualException.errors[0].message)
+        Assertions.assertEquals(expectedErrorMessage, actualException.message)
 
         Mockito.verify(categoryGateway, times(1)).findById(eq(CategoryID.from(expectedId)))
         Mockito.verify(categoryGateway, times(0)).update(any())

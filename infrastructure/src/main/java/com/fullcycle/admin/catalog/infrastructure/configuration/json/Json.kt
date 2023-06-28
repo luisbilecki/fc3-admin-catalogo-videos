@@ -37,7 +37,7 @@ enum class Json {
             return INSTANCE.mapper.copy()
         }
 
-        fun writeValueAsString(obj: Any?): String {
+        fun writeValueAsString(obj: Any): String {
             return invoke {
                 INSTANCE.mapper.writeValueAsString(
                     obj
@@ -45,7 +45,7 @@ enum class Json {
             }
         }
 
-        fun <T> readValue(json: String?, clazz: Class<T>?): T {
+        fun <T> readValue(json: String, clazz: Class<T>): T {
             return invoke { INSTANCE.mapper.readValue(json, clazz) }
         }
 

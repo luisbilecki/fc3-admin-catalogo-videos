@@ -5,10 +5,10 @@ import java.time.Instant
 
 
 data class CategoryListResponse(
-    @JsonProperty("id") val id: String,
-    @JsonProperty("name") val name: String?,
-    @JsonProperty("description") val description: String?,
-    @JsonProperty("is_active") val isActive: Boolean,
-    @JsonProperty("created_at") val createdAt: Instant,
-    @JsonProperty("deleted_at") val deletedAt: Instant?
+    @get:JsonProperty("id") val id: String,
+    @get:JsonProperty("name") val name: String?,
+    @get:JsonProperty("description") val description: String?,
+    @get:JsonProperty("is_active") val isActive: Boolean,
+    @get:JsonProperty("created_at") val createdAt: Instant,
+    @get:JsonProperty("deleted_at") val deletedAt: Instant?
 )

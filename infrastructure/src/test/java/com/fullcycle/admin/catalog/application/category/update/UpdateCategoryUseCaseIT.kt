@@ -167,7 +167,7 @@ class UpdateCategoryUseCaseIT @Autowired constructor(
 
         val actualException = Assertions.assertThrows(NotFoundException::class.java) { useCase.execute(command) }
 
-        Assertions.assertEquals(expectedErrorMessage, actualException.errors.first().message)
+        Assertions.assertEquals(expectedErrorMessage, actualException.message)
     }
 
     private fun save(vararg aCategory: Category) {
