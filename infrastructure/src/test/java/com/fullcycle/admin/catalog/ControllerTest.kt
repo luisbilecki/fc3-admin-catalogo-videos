@@ -14,7 +14,7 @@ import kotlin.reflect.KClass
 @Target(AnnotationTarget.TYPE, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 @Inherited
-@ActiveProfiles("test")
+@ActiveProfiles("test-integration")
 @WebMvcTest
 @Import(ObjectMapperConfig::class)
 annotation class ControllerTest(
