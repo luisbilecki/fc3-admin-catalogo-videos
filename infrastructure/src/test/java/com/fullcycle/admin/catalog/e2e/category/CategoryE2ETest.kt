@@ -24,7 +24,6 @@ import org.testcontainers.containers.MySQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 
-
 @E2ETest
 @Testcontainers
 class CategoryE2ETest @Autowired constructor(
@@ -128,6 +127,39 @@ class CategoryE2ETest @Autowired constructor(
             .andExpect(jsonPath("$.items[0].name", equalTo("Documentários")))
             .andExpect(jsonPath("$.items[1].name", equalTo("Filmes")))
             .andExpect(jsonPath("$.items[2].name", equalTo("Séries")))
+    }
+
+    @Test
+    fun asACatalogAdminIShouldBeAbleToGetACategoryByItsIdentifier() {
+        Assertions.assertTrue(MYSQL_CONTAINER.isRunning)
+        Assertions.assertEquals(0, categoryRepository.count())
+
+        val expectedName = "Filmes"
+        val expectedDescription = "A categoria mais assistida"
+        val expectedIsActive = true
+        val actualId = givenACategory(expectedName, expectedDescription, expectedIsActive)
+        val actualCategory = retrieveACategory(actualId.value)
+
+        Assertions.assertEquals(expectedName, actualCategory.name)
+        Assertions.assertEquals(expectedDescription, actualCategory.description)
+        Assertions.assertEquals(expectedIsActive, actualCategory.isActive)
+        Assertions.assertNotNull(actualCategory.createdAt)
+        Assertions.assertNotNull(actualCategory.updatedAt)
+        Assertions.assertNull(actualCategory.deletedAt)
+    }
+
+    @Test
+    fun asACatalogAdminIShouldBeAbleToSeeATreatedErrorByGettingANotFoundCategory() {
+        Assertions.assertTrue(MYSQL_CONTAINER.isRunning)
+        Assertions.assertEquals(0, categoryRepository.count())
+
+        val request = get("/categories/123")
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON)
+
+        mvc.perform(request)
+            .andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.message", equalTo("Category with ID 123 was not found")))
     }
 
     private fun listCategories(page: Int, perPage: Int): ResultActions {
