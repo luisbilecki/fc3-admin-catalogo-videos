@@ -36,7 +36,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import java.util.*
 
-
 @ControllerTest(controllers = [CategoryAPI::class])
 class CategoryAPITest @Autowired constructor(
     private val mvc: MockMvc,

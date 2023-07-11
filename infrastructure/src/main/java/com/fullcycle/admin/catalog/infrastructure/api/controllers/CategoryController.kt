@@ -36,7 +36,7 @@ class CategoryController(
     override fun createCategory(input: CreateCategoryRequest): ResponseEntity<*>? {
         val command = CreateCategoryCommand.with(
             input.name,
-            input.description,
+            input.description!!,
             input.active
         )
 
