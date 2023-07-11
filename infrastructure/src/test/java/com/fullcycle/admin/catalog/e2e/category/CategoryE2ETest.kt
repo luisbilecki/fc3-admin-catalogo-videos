@@ -4,6 +4,7 @@ import com.fullcycle.admin.catalog.E2ETest
 import com.fullcycle.admin.catalog.domain.category.CategoryID
 import com.fullcycle.admin.catalog.infrastructure.category.models.CategoryResponse
 import com.fullcycle.admin.catalog.infrastructure.category.models.CreateCategoryRequest
+import com.fullcycle.admin.catalog.infrastructure.category.models.UpdateCategoryRequest
 import com.fullcycle.admin.catalog.infrastructure.category.persistence.CategoryRepository
 import com.fullcycle.admin.catalog.infrastructure.configuration.json.Json
 import org.hamcrest.Matchers.equalTo
@@ -16,8 +17,7 @@ import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActions
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.testcontainers.containers.MySQLContainer
@@ -160,6 +160,89 @@ class CategoryE2ETest @Autowired constructor(
         mvc.perform(request)
             .andExpect(status().isNotFound())
             .andExpect(jsonPath("$.message", equalTo("Category with ID 123 was not found")))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun asACatalogAdminIShouldBeAbleToUpdateACategoryByItsIdentifier() {
+        Assertions.assertTrue(MYSQL_CONTAINER.isRunning)
+        Assertions.assertEquals(0, categoryRepository.count())
+
+        val actualId = givenACategory("Movies", "", true)
+        val expectedName = "Filmes"
+        val expectedDescription = "A categoria mais assistida"
+        val expectedIsActive = true
+        val requestBody = UpdateCategoryRequest(expectedName, expectedDescription, expectedIsActive)
+        val request = put("/categories/" + actualId.value)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(Json.writeValueAsString(requestBody))
+
+        mvc.perform(request)
+            .andExpect(status().isOk())
+
+        val actualCategory = categoryRepository.findById(actualId.value).get()
+
+        Assertions.assertEquals(expectedName, actualCategory.name)
+        Assertions.assertEquals(expectedDescription, actualCategory.description)
+        Assertions.assertEquals(expectedIsActive, actualCategory.isActive)
+        Assertions.assertNotNull(actualCategory.createdAt)
+        Assertions.assertNotNull(actualCategory.updatedAt)
+        Assertions.assertNull(actualCategory.deletedAt)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun asACatalogAdminIShouldBeAbleToInactivateACategoryByItsIdentifier() {
+        Assertions.assertTrue(MYSQL_CONTAINER.isRunning)
+        Assertions.assertEquals(0, categoryRepository.count())
+
+        val expectedName = "Filmes"
+        val expectedDescription = "A categoria mais assistida"
+        val expectedIsActive = false
+        val actualId = givenACategory(expectedName, expectedDescription, true)
+        val requestBody = UpdateCategoryRequest(expectedName, expectedDescription, expectedIsActive)
+        val request = put("/categories/" + actualId.value)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(Json.writeValueAsString(requestBody))
+
+        mvc.perform(request)
+            .andExpect(status().isOk())
+
+        val actualCategory = categoryRepository.findById(actualId.value).get()
+
+        Assertions.assertEquals(expectedName, actualCategory.name)
+        Assertions.assertEquals(expectedDescription, actualCategory.description)
+        Assertions.assertEquals(expectedIsActive, actualCategory.isActive)
+        Assertions.assertNotNull(actualCategory.createdAt)
+        Assertions.assertNotNull(actualCategory.updatedAt)
+        Assertions.assertNotNull(actualCategory.deletedAt)
+    }
+
+    @Test
+    fun asACatalogAdminIShouldBeAbleToActivateACategoryByItsIdentifier() {
+        Assertions.assertTrue(MYSQL_CONTAINER.isRunning)
+        Assertions.assertEquals(0, categoryRepository.count())
+
+        val expectedName = "Filmes"
+        val expectedDescription = "A categoria mais assistida"
+        val expectedIsActive = true
+        val actualId = givenACategory(expectedName, expectedDescription, false)
+        val requestBody = UpdateCategoryRequest(expectedName, expectedDescription, expectedIsActive)
+        val request = put("/categories/" + actualId.value)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(Json.writeValueAsString(requestBody))
+
+        mvc.perform(request)
+            .andExpect(status().isOk())
+
+        val actualCategory = categoryRepository.findById(actualId.value).get()
+
+        Assertions.assertEquals(expectedName, actualCategory.name)
+        Assertions.assertEquals(expectedDescription, actualCategory.description)
+        Assertions.assertEquals(expectedIsActive, actualCategory.isActive)
+        Assertions.assertNotNull(actualCategory.createdAt)
+        Assertions.assertNotNull(actualCategory.updatedAt)
+        Assertions.assertNull(actualCategory.deletedAt)
     }
 
     private fun listCategories(page: Int, perPage: Int): ResultActions {
