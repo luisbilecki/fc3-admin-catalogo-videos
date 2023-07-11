@@ -245,6 +245,22 @@ class CategoryE2ETest @Autowired constructor(
         Assertions.assertNull(actualCategory.deletedAt)
     }
 
+    @Test
+    fun asACatalogAdminIShouldBeAbleToDeleteACategoryByItsIdentifier() {
+        Assertions.assertTrue(MYSQL_CONTAINER.isRunning)
+        Assertions.assertEquals(0, categoryRepository.count())
+
+        val actualId = givenACategory("Filmes", "", true)
+
+        mvc.perform(
+            delete("/categories/" + actualId.value)
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+            .andExpect(status().isNoContent())
+
+        Assertions.assertFalse(categoryRepository.existsById(actualId.value))
+    }
+
     private fun listCategories(page: Int, perPage: Int): ResultActions {
         return listCategories(page, perPage, "", "", "")
     }
