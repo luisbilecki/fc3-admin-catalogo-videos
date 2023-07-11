@@ -1,10 +1,13 @@
 package com.fullcycle.admin.catalog.e2e.category
 
+import com.fullcycle.admin.catalog.E2ETest
 import com.fullcycle.admin.catalog.domain.category.CategoryID
 import com.fullcycle.admin.catalog.infrastructure.category.models.CategoryResponse
 import com.fullcycle.admin.catalog.infrastructure.category.models.CreateCategoryRequest
 import com.fullcycle.admin.catalog.infrastructure.category.persistence.CategoryRepository
 import com.fullcycle.admin.catalog.infrastructure.configuration.json.Json
+import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -12,15 +15,17 @@ import org.springframework.http.MediaType
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.ResultActions
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.testcontainers.containers.MySQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-
+@E2ETest
 @Testcontainers
 class CategoryE2ETest @Autowired constructor(
     private val mvc: MockMvc,
@@ -46,8 +51,113 @@ class CategoryE2ETest @Autowired constructor(
         Assertions.assertNull(actualCategory.deletedAt)
     }
 
-    private fun givenACategory(aName: String, aDescription: String, isActive: Boolean): CategoryID {
-        val requestBody = CreateCategoryRequest(aName, aDescription, isActive)
+    @Test
+    fun asACatalogAdminIShouldBeAbleToNavigateToAllCategories() {
+        Assertions.assertTrue(MYSQL_CONTAINER.isRunning)
+        Assertions.assertEquals(0, categoryRepository.count())
+
+        givenACategory("Filmes", "", true)
+        givenACategory("Documentários", "", true)
+        givenACategory("Séries", "", true)
+
+        listCategories(0, 1)
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.current_page", equalTo(0)))
+            .andExpect(jsonPath("$.per_page", equalTo(1)))
+            .andExpect(jsonPath("$.total", equalTo(3)))
+            .andExpect(jsonPath("$.items", hasSize<Int>(1)))
+            .andExpect(jsonPath("$.items[0].name", equalTo("Documentários")))
+
+        listCategories(1, 1)
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.current_page", equalTo(1)))
+            .andExpect(jsonPath("$.per_page", equalTo(1)))
+            .andExpect(jsonPath("$.total", equalTo(3)))
+            .andExpect(jsonPath("$.items", hasSize<Int>(1)))
+            .andExpect(jsonPath("$.items[0].name", equalTo("Filmes")))
+
+        listCategories(2, 1)
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.current_page", equalTo(2)))
+            .andExpect(jsonPath("$.per_page", equalTo(1)))
+            .andExpect(jsonPath("$.total", equalTo(3)))
+            .andExpect(jsonPath("$.items", hasSize<Int>(1)))
+            .andExpect(jsonPath("$.items[0].name", equalTo("Séries")))
+
+        listCategories(3, 1)
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.current_page", equalTo(3)))
+            .andExpect(jsonPath("$.per_page", equalTo(1)))
+            .andExpect(jsonPath("$.total", equalTo(3)))
+            .andExpect(jsonPath("$.items", hasSize<Int>(0)))
+    }
+
+    @Test
+    fun asACatalogAdminIShouldBeAbleToSearchBetweenAllCategories() {
+        Assertions.assertTrue(MYSQL_CONTAINER.isRunning)
+        Assertions.assertEquals(0, categoryRepository.count())
+
+        givenACategory("Filmes", "", true)
+        givenACategory("Documentários", "", true)
+        givenACategory("Séries", "", true)
+
+        listCategories(0, 1, "fil")
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.current_page", equalTo(0)))
+            .andExpect(jsonPath("$.per_page", equalTo(1)))
+            .andExpect(jsonPath("$.total", equalTo(1)))
+            .andExpect(jsonPath("$.items", hasSize<Int>(1)))
+            .andExpect(jsonPath("$.items[0].name", equalTo("Filmes")))
+    }
+
+    @Test
+    fun asACatalogAdminIShouldBeAbleToSortAllCategoriesByDescriptionDesc() {
+        Assertions.assertTrue(MYSQL_CONTAINER.isRunning)
+        Assertions.assertEquals(0, categoryRepository.count())
+
+        givenACategory("Filmes", "C", true)
+        givenACategory("Documentários", "Z", true)
+        givenACategory("Séries", "A", true)
+
+        listCategories(0, 3, "", "description", "desc")
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.current_page", equalTo(0)))
+            .andExpect(jsonPath("$.per_page", equalTo(3)))
+            .andExpect(jsonPath("$.total", equalTo(3)))
+            .andExpect(jsonPath("$.items", hasSize<Int>(3)))
+            .andExpect(jsonPath("$.items[0].name", equalTo("Documentários")))
+            .andExpect(jsonPath("$.items[1].name", equalTo("Filmes")))
+            .andExpect(jsonPath("$.items[2].name", equalTo("Séries")))
+    }
+
+    private fun listCategories(page: Int, perPage: Int): ResultActions {
+        return listCategories(page, perPage, "", "", "")
+    }
+
+    private fun listCategories(page: Int, perPage: Int, search: String): ResultActions {
+        return listCategories(page, perPage, search, "", "")
+    }
+
+    private fun listCategories(
+        page: Int,
+        perPage: Int,
+        search: String,
+        sort: String,
+        direction: String
+    ): ResultActions {
+        val request = get("/categories")
+            .queryParam("page", page.toString())
+            .queryParam("perPage", perPage.toString())
+            .queryParam("search", search)
+            .queryParam("sort", sort)
+            .queryParam("dir", direction)
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON)
+
+        return mvc.perform(request)
+    }
+    private fun givenACategory(name: String, description: String, isActive: Boolean): CategoryID {
+        val requestBody = CreateCategoryRequest(name, description, isActive)
         val request = post("/categories")
             .contentType(MediaType.APPLICATION_JSON)
             .content(Json.writeValueAsString(requestBody))
@@ -74,19 +184,17 @@ class CategoryE2ETest @Autowired constructor(
 
     companion object {
 
+        @JvmStatic
         @Container
         private val MYSQL_CONTAINER = MySQLContainer("mysql:latest")
             .withPassword("123456")
             .withUsername("root")
             .withDatabaseName("adm_videos")
 
+        @JvmStatic
         @DynamicPropertySource
         fun setDatasourceProperties(registry: DynamicPropertyRegistry) {
-            registry.add("mysql.port") {
-                MYSQL_CONTAINER.getMappedPort(
-                    3306
-                )
-            }
+            registry.add("mysql.port") { MYSQL_CONTAINER.getMappedPort(3306) }
         }
     }
 }
