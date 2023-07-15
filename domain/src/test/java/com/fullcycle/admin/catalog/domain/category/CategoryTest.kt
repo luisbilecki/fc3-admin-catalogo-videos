@@ -1,6 +1,5 @@
-package com.fullcycle.admin.catalog.domain
+package com.fullcycle.admin.catalog.domain.category
 
-import com.fullcycle.admin.catalog.domain.category.Category
 import com.fullcycle.admin.catalog.domain.exceptions.DomainException
 import com.fullcycle.admin.catalog.domain.validation.handler.ThrowsValidationHandler
 import org.junit.jupiter.api.Assertions
