@@ -1,8 +1,6 @@
 package com.fullcycle.admin.catalog.domain.genre
 
-import com.fullcycle.admin.catalog.domain.exceptions.DomainException
 import com.fullcycle.admin.catalog.domain.exceptions.NotificationException
-import com.fullcycle.admin.catalog.domain.validation.handler.ThrowsValidationHandler
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
@@ -72,5 +70,56 @@ class GenreTest {
 
         Assertions.assertEquals(expectedErrorCount, actualException.errors.size)
         Assertions.assertEquals(expectedErrorMessage, actualException.errors[0].message)
+    }
+
+    @Test
+    fun givenAnActiveGenre_whenCallDeactivate_shouldReceiveOK() {
+        val expectedName = "Ação"
+        val expectedIsActive = false
+        val expectedCategories = 0
+        val actualGenre = Genre.newGenre(expectedName, true)
+
+        Assertions.assertNotNull(actualGenre)
+        Assertions.assertTrue(actualGenre.isActive)
+        Assertions.assertNull(actualGenre.deletedAt)
+
+        val actualCreatedAt = actualGenre.createdAt
+        val actualUpdatedAt = actualGenre.updatedAt
+
+        actualGenre.deactivate()
+
+        Assertions.assertNotNull(actualGenre.id)
+        Assertions.assertEquals(expectedName, actualGenre.name)
+        Assertions.assertEquals(expectedIsActive, actualGenre.isActive)
+        Assertions.assertEquals(expectedCategories, actualGenre.categories.size)
+        Assertions.assertEquals(actualCreatedAt, actualGenre.createdAt)
+        Assertions.assertTrue(actualUpdatedAt.isBefore(actualGenre.updatedAt))
+        Assertions.assertNotNull(actualGenre.deletedAt)
+    }
+
+    @Test
+    fun givenAnInactiveGenre_whenCallActivate_shouldReceiveOK() {
+        val expectedName = "Ação"
+        val expectedIsActive = true
+        val expectedCategories = 0
+        val actualGenre = Genre.newGenre(expectedName, false)
+
+        Assertions.assertNotNull(actualGenre)
+        Assertions.assertFalse(actualGenre.isActive)
+        Assertions.assertNotNull(actualGenre.deletedAt)
+
+        val actualCreatedAt = actualGenre.createdAt
+        val actualUpdatedAt = actualGenre.updatedAt
+
+        actualGenre.activate()
+
+        Assertions.assertNotNull(actualGenre.id)
+        Assertions.assertEquals(expectedName, actualGenre.name)
+        Assertions.assertEquals(expectedIsActive, actualGenre.isActive)
+        Assertions.assertEquals(expectedCategories, actualGenre.categories.size)
+        Assertions.assertEquals(actualCreatedAt, actualGenre.createdAt)
+        Assertions.assertTrue(actualUpdatedAt.isBefore(actualGenre.updatedAt))
+        Assertions.assertNotNull(actualGenre.updatedAt)
+        Assertions.assertNull(actualGenre.deletedAt)
     }
 }
