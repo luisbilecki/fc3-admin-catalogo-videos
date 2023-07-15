@@ -1,9 +1,11 @@
 package com.fullcycle.admin.catalog.domain.genre
 
 import com.fullcycle.admin.catalog.domain.exceptions.DomainException
+import com.fullcycle.admin.catalog.domain.exceptions.NotificationException
 import com.fullcycle.admin.catalog.domain.validation.handler.ThrowsValidationHandler
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+
 
 class GenreTest {
 
@@ -30,10 +32,9 @@ class GenreTest {
         val expectedIsActive = true
         val expectedErrorCount = 1
         val expectedErrorMessage = "'name' should not be null"
-        val actualGenre = Genre.newGenre(expectedName, expectedIsActive)
         val actualException = Assertions.assertThrows(
-            DomainException::class.java
-        ) { actualGenre.validate(ThrowsValidationHandler()) }
+            NotificationException::class.java
+        ) { Genre.newGenre(expectedName, expectedIsActive) }
 
         Assertions.assertEquals(expectedErrorCount, actualException.errors.size)
         Assertions.assertEquals(expectedErrorMessage, actualException.errors[0].message)
@@ -45,10 +46,9 @@ class GenreTest {
         val expectedIsActive = true
         val expectedErrorCount = 1
         val expectedErrorMessage = "'name' should not be empty"
-        val actualGenre = Genre.newGenre(expectedName, expectedIsActive)
         val actualException = Assertions.assertThrows(
-            DomainException::class.java
-        ) { actualGenre.validate(ThrowsValidationHandler()) }
+            NotificationException::class.java
+        ) { Genre.newGenre(expectedName, expectedIsActive) }
 
         Assertions.assertEquals(expectedErrorCount, actualException.errors.size)
         Assertions.assertEquals(expectedErrorMessage, actualException.errors[0].message)
@@ -66,10 +66,9 @@ class GenreTest {
         val expectedIsActive = true
         val expectedErrorCount = 1
         val expectedErrorMessage = "'name' must be between 1 and 255 characters"
-        val actualGenre = Genre.newGenre(expectedName, expectedIsActive)
         val actualException = Assertions.assertThrows(
-            DomainException::class.java
-        ) { actualGenre.validate(ThrowsValidationHandler()) }
+            NotificationException::class.java
+        ) { Genre.newGenre(expectedName, expectedIsActive) }
 
         Assertions.assertEquals(expectedErrorCount, actualException.errors.size)
         Assertions.assertEquals(expectedErrorMessage, actualException.errors[0].message)

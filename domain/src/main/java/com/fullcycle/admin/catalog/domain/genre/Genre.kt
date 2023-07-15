@@ -2,12 +2,15 @@ package com.fullcycle.admin.catalog.domain.genre
 
 import com.fullcycle.admin.catalog.domain.AggregateRoot
 import com.fullcycle.admin.catalog.domain.category.CategoryID
+import com.fullcycle.admin.catalog.domain.exceptions.NotificationException
 import com.fullcycle.admin.catalog.domain.validation.ValidationHandler
+import com.fullcycle.admin.catalog.domain.validation.handler.Notification
+import com.fullcycle.admin.catalog.domain.validation.hasError
 import java.time.Instant
 import java.util.*
 
 
-open class Genre protected constructor(
+class Genre private constructor(
     val id: GenreID,
     val name: String?,
     val isActive: Boolean,
@@ -17,9 +20,17 @@ open class Genre protected constructor(
     val deletedAt: Instant?
 ) : AggregateRoot<GenreID>(id) {
 
-    override fun validate(handler: ValidationHandler) {}
-    fun getCategories(): List<CategoryID> {
-        return Collections.unmodifiableList(categories)
+    init {
+        val notification = Notification.create()
+        validate(notification)
+
+        if (notification.hasError()) {
+            throw NotificationException("Failed to create a Aggregate Genre", notification)
+        }
+    }
+
+    override fun validate(handler: ValidationHandler) {
+        GenreValidator(this, handler).validate()
     }
 
     companion object {
