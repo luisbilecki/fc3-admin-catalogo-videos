@@ -4,6 +4,8 @@ import com.fullcycle.admin.catalog.domain.category.CategoryID
 import com.fullcycle.admin.catalog.domain.exceptions.NotificationException
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import java.util.List
+
 
 class GenreTest {
 
@@ -215,5 +217,138 @@ class GenreTest {
 
         Assertions.assertEquals(expectedErrorCount, actualException.errors.size)
         Assertions.assertEquals(expectedErrorMessage, actualException.errors[0].message)
+    }
+
+
+    @Test
+    fun givenAValidGenre_whenCallUpdateWithNullCategories_shouldReceiveOK() {
+        val expectedName = "Ação"
+        val expectedIsActive = true
+        val expectedCategories = ArrayList<CategoryID>()
+        val actualGenre = Genre.newGenre("acao", expectedIsActive)
+        val actualCreatedAt = actualGenre.createdAt
+        val actualUpdatedAt = actualGenre.updatedAt
+        
+        Assertions.assertDoesNotThrow {
+            actualGenre.update(
+                expectedName,
+                expectedIsActive,
+                null
+            )
+        }
+        
+        Assertions.assertNotNull(actualGenre.id)
+        Assertions.assertEquals(expectedName, actualGenre.name)
+        Assertions.assertEquals(expectedIsActive, actualGenre.isActive)
+        Assertions.assertEquals(expectedCategories, actualGenre.categories)
+        Assertions.assertEquals(actualCreatedAt, actualGenre.createdAt)
+        Assertions.assertTrue(actualUpdatedAt.isBefore(actualGenre.updatedAt))
+        Assertions.assertNull(actualGenre.deletedAt)
+    }
+
+    @Test
+    fun givenAValidEmptyCategoriesGenre_whenCallAddCategory_shouldReceiveOK() {
+        val seriesID = CategoryID.from("123")
+        val moviesID = CategoryID.from("456")
+        val expectedName = "Ação"
+        val expectedIsActive = true
+        val expectedCategories = listOf(seriesID, moviesID)
+        
+        val actualGenre = Genre.newGenre("acao", expectedIsActive)
+        
+        Assertions.assertEquals(0, actualGenre.categories.size)
+        
+        val actualCreatedAt = actualGenre.createdAt
+        val actualUpdatedAt = actualGenre.updatedAt
+        
+        actualGenre.addCategory(seriesID)
+        actualGenre.addCategory(moviesID)
+        
+        Assertions.assertNotNull(actualGenre.id)
+        Assertions.assertEquals(expectedName, actualGenre.name)
+        Assertions.assertEquals(expectedIsActive, actualGenre.isActive)
+        Assertions.assertEquals(expectedCategories, actualGenre.categories)
+        Assertions.assertEquals(actualCreatedAt, actualGenre.createdAt)
+        Assertions.assertTrue(actualUpdatedAt.isBefore(actualGenre.updatedAt))
+        Assertions.assertNull(actualGenre.deletedAt)
+    }
+
+    @Test
+    fun givenAInvalidNullAsCategoryID_whenCallAddCategory_shouldReceiveOK() {
+        val seriesID = CategoryID.from("123")
+        val moviesID = CategoryID.from("456")
+        val expectedName = "Ação"
+        val expectedIsActive = true
+        val expectedCategories = ArrayList<CategoryID>()
+        
+        val actualGenre = Genre.newGenre("acao", expectedIsActive)
+        
+        Assertions.assertEquals(0, actualGenre.categories.size)
+        
+        val actualCreatedAt = actualGenre.createdAt
+        val actualUpdatedAt = actualGenre.updatedAt     
+        actualGenre.addCategory(null)
+        
+        Assertions.assertNotNull(actualGenre.id)
+        Assertions.assertEquals(expectedName, actualGenre.name)
+        Assertions.assertEquals(expectedIsActive, actualGenre.isActive)
+        Assertions.assertEquals(expectedCategories, actualGenre.categories)
+        Assertions.assertEquals(actualCreatedAt, actualGenre.createdAt)
+        Assertions.assertTrue(actualUpdatedAt.isBefore(actualGenre.updatedAt))
+        Assertions.assertNull(actualGenre.deletedAt)
+    }
+
+    @Test
+    fun givenAValidGenreWithTwoCategories_whenCallRemoveCategory_shouldReceiveOK() {
+        val seriesID = CategoryID.from("123")
+        val moviesID = CategoryID.from("456")
+        val expectedName = "Ação"
+        val expectedIsActive = true
+        val expectedCategories = listOf(moviesID)
+        val actualGenre = Genre.newGenre("acao", expectedIsActive)
+
+        actualGenre.update(expectedName, expectedIsActive, List.of(seriesID, moviesID))
+
+        Assertions.assertEquals(2, actualGenre.categories.size)
+
+        val actualCreatedAt = actualGenre.createdAt
+        val actualUpdatedAt = actualGenre.updatedAt
+
+        actualGenre.removeCategory(seriesID)
+
+        Assertions.assertNotNull(actualGenre.id)
+        Assertions.assertEquals(expectedName, actualGenre.name)
+        Assertions.assertEquals(expectedIsActive, actualGenre.isActive)
+        Assertions.assertEquals(expectedCategories, actualGenre.categories)
+        Assertions.assertEquals(actualCreatedAt, actualGenre.createdAt)
+        Assertions.assertTrue(actualUpdatedAt.isBefore(actualGenre.updatedAt))
+        Assertions.assertNull(actualGenre.deletedAt)
+    }
+
+    @Test
+    fun givenAnInvalidNullAsCategoryID_whenCallRemoveCategory_shouldReceiveOK() {
+        val seriesID = CategoryID.from("123")
+        val moviesID = CategoryID.from("456")
+        val expectedName = "Ação"
+        val expectedIsActive = true
+        val expectedCategories = listOf(seriesID, moviesID)
+        val actualGenre = Genre.newGenre("acao", expectedIsActive)
+
+        actualGenre.update(expectedName, expectedIsActive, expectedCategories)
+
+        Assertions.assertEquals(2, actualGenre.categories.size)
+
+        val actualCreatedAt = actualGenre.createdAt
+        val actualUpdatedAt = actualGenre.updatedAt
+
+        actualGenre.removeCategory(null)
+
+        Assertions.assertNotNull(actualGenre.id)
+        Assertions.assertEquals(expectedName, actualGenre.name)
+        Assertions.assertEquals(expectedIsActive, actualGenre.isActive)
+        Assertions.assertEquals(expectedCategories, actualGenre.categories)
+        Assertions.assertEquals(actualCreatedAt, actualGenre.createdAt)
+        Assertions.assertTrue(actualUpdatedAt.isBefore(actualGenre.updatedAt))
+        Assertions.assertNull(actualGenre.deletedAt)
     }
 }

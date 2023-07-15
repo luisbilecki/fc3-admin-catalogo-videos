@@ -60,7 +60,7 @@ class Genre private constructor(
             deactivate()
         }
         name = newName
-        categories = ArrayList(newCategories)
+        categories = newCategories ?: emptyList()
         updatedAt = now()
         selfValidate()
         return this
