@@ -2,7 +2,7 @@ package com.fullcycle.admin.catalog.application.category.retrieve.list
 
 import com.fullcycle.admin.catalog.IntegrationTest
 import com.fullcycle.admin.catalog.domain.category.Category
-import com.fullcycle.admin.catalog.domain.category.CategorySearchQuery
+import com.fullcycle.admin.catalog.domain.pagination.SearchQuery
 import com.fullcycle.admin.catalog.infrastructure.category.persistence.CategoryJpaEntity
 import com.fullcycle.admin.catalog.infrastructure.category.persistence.CategoryRepository
 import org.junit.jupiter.api.Assertions
@@ -45,7 +45,7 @@ class ListCategoriesUseCaseIT @Autowired constructor(
         val expectedDirection = "asc"
         val expectedItemsCount = 0
         val expectedTotal = 0L
-        val query = CategorySearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort, expectedDirection)
+        val query = SearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort, expectedDirection)
         val actualResult = useCase.execute(query)
 
         Assertions.assertEquals(expectedItemsCount, actualResult.items.size)
@@ -73,7 +73,7 @@ class ListCategoriesUseCaseIT @Autowired constructor(
     ) {
         val expectedSort = "name"
         val expectedDirection = "asc"
-        val query = CategorySearchQuery(
+        val query = SearchQuery(
             expectedPage, expectedPerPage,
             expectedTerms!!, expectedSort, expectedDirection
         )
@@ -103,7 +103,7 @@ class ListCategoriesUseCaseIT @Autowired constructor(
         expectedCategoryName: String?
     ) {
         val expectedTerms = ""
-        val query = CategorySearchQuery(
+        val query = SearchQuery(
             expectedPage, expectedPerPage, expectedTerms,
             expectedSort!!, expectedDirection!!
         )
@@ -133,7 +133,7 @@ class ListCategoriesUseCaseIT @Autowired constructor(
         val expectedSort = "name"
         val expectedDirection = "asc"
         val expectedTerms = ""
-        val query = CategorySearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort, expectedDirection)
+        val query = SearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort, expectedDirection)
         val actualResult = useCase.execute(query)
 
         Assertions.assertEquals(expectedItemsCount, actualResult.items.size)
