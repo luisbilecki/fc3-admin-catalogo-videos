@@ -18,7 +18,7 @@ class GenreTest {
         Assertions.assertNotNull(actualGenre.id)
         Assertions.assertEquals(expectedName, actualGenre.name)
         Assertions.assertEquals(expectedIsActive, actualGenre.isActive)
-        Assertions.assertEquals(expectedCategories, actualGenre.categories.size())
+        Assertions.assertEquals(expectedCategories, actualGenre.categories.size)
         Assertions.assertNotNull(actualGenre.createdAt)
         Assertions.assertNotNull(actualGenre.updatedAt)
         Assertions.assertNull(actualGenre.deletedAt)
@@ -31,7 +31,7 @@ class GenreTest {
         val expectedErrorCount = 1
         val expectedErrorMessage = "'name' should not be null"
         val actualGenre = Genre.newGenre(expectedName, expectedIsActive)
-        val actualException = Assertions.assertThrows<DomainException>(
+        val actualException = Assertions.assertThrows(
             DomainException::class.java
         ) { actualGenre.validate(ThrowsValidationHandler()) }
 
