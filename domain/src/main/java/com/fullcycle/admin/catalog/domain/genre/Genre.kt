@@ -3,36 +3,38 @@ package com.fullcycle.admin.catalog.domain.genre
 import com.fullcycle.admin.catalog.domain.AggregateRoot
 import com.fullcycle.admin.catalog.domain.category.CategoryID
 import com.fullcycle.admin.catalog.domain.exceptions.NotificationException
-import com.fullcycle.admin.catalog.domain.utils.InstantUtils
 import com.fullcycle.admin.catalog.domain.utils.InstantUtils.now
 import com.fullcycle.admin.catalog.domain.validation.ValidationHandler
 import com.fullcycle.admin.catalog.domain.validation.handler.Notification
 import com.fullcycle.admin.catalog.domain.validation.hasError
 import java.time.Instant
-import java.util.*
 
 
 class Genre private constructor(
     val id: GenreID,
-    val name: String?,
+    var name: String?,
     var isActive: Boolean,
-    val categories: List<CategoryID>,
+    var categories: List<CategoryID>,
     val createdAt: Instant,
     var updatedAt: Instant,
     var deletedAt: Instant?
 ) : AggregateRoot<GenreID>(id) {
 
     init {
+        selfValidate()
+    }
+
+    override fun validate(handler: ValidationHandler) {
+        GenreValidator(this, handler).validate()
+    }
+
+    private fun selfValidate() {
         val notification = Notification.create()
         validate(notification)
 
         if (notification.hasError()) {
             throw NotificationException("Failed to create a Aggregate Genre", notification)
         }
-    }
-
-    override fun validate(handler: ValidationHandler) {
-        GenreValidator(this, handler).validate()
     }
 
     fun deactivate(): Genre? {
@@ -51,10 +53,23 @@ class Genre private constructor(
         return this
     }
 
+    fun update(newName: String?, isActive: Boolean, newCategories: List<CategoryID>?): Genre? {
+        if (isActive) {
+            activate()
+        } else {
+            deactivate()
+        }
+        name = newName
+        categories = ArrayList(newCategories)
+        updatedAt = now()
+        selfValidate()
+        return this
+    }
+
     companion object {
         fun newGenre(name: String?, isActive: Boolean): Genre {
             val id = GenreID.unique()
-            val now = InstantUtils.now()
+            val now = now()
             val deletedAt = if (isActive) null else now
 
             return Genre(id, name, isActive, ArrayList(), now, now, deletedAt)

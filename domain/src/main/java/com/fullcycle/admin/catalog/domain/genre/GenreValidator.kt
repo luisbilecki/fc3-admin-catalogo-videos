@@ -22,11 +22,11 @@ class GenreValidator(private val genre: Genre, handler: ValidationHandler) :
             validationHandler().append(Error("'name' should not be null"))
             return
         }
-        if (genre.name.isBlank()) {
+        if (genre.name!!.isBlank()) {
             validationHandler().append(Error("'name' should not be empty"))
             return
         }
-        val length = genre.name.trim { it <= ' ' }.length
+        val length = genre.name!!.trim { it <= ' ' }.length
         if (length > NAME_MAX_LENGTH || length < NAME_MIN_LENGTH) {
             this.validationHandler().append(Error("'name' must be between 1 and 255 characters"))
         }
