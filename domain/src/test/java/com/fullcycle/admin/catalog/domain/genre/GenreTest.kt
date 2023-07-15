@@ -1,8 +1,10 @@
 package com.fullcycle.admin.catalog.domain.genre
 
+import com.fullcycle.admin.catalog.domain.category.CategoryID
 import com.fullcycle.admin.catalog.domain.exceptions.NotificationException
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import java.util.List
 
 
 class GenreTest {
@@ -121,5 +123,99 @@ class GenreTest {
         Assertions.assertTrue(actualUpdatedAt.isBefore(actualGenre.updatedAt))
         Assertions.assertNotNull(actualGenre.updatedAt)
         Assertions.assertNull(actualGenre.deletedAt)
+    }
+
+    @Test
+    fun givenAValidInactiveGenre_whenCallUpdateWithActivate_shouldReceiveGenreUpdated() {
+        val expectedName = "Ação"
+        val expectedIsActive = true
+        val expectedCategories = listOf(CategoryID.from("123"))
+        val actualGenre = Genre.newGenre("acao", false)
+
+        Assertions.assertNotNull(actualGenre)
+        Assertions.assertFalse(actualGenre.isActive)
+        Assertions.assertNotNull(actualGenre.deletedAt)
+
+        val actualCreatedAt = actualGenre.createdAt
+        val actualUpdatedAt = actualGenre.updatedAt
+
+        actualGenre.update(expectedName, expectedIsActive, expectedCategories)
+
+        Assertions.assertNotNull(actualGenre.id)
+        Assertions.assertEquals(expectedName, actualGenre.name)
+        Assertions.assertEquals(expectedIsActive, actualGenre.isActive)
+        Assertions.assertEquals(expectedCategories, actualGenre.categories)
+        Assertions.assertEquals(actualCreatedAt, actualGenre.createdAt)
+        Assertions.assertTrue(actualUpdatedAt.isBefore(actualGenre.updatedAt))
+        Assertions.assertNull(actualGenre.deletedAt)
+    }
+
+    @Test
+    fun givenAValidActiveGenre_whenCallUpdateWithInactivate_shouldReceiveGenreUpdated() {
+        val expectedName = "Ação"
+        val expectedIsActive = false
+        val expectedCategories = listOf(CategoryID.from("123"))
+        val actualGenre = Genre.newGenre("acao", true)
+
+        Assertions.assertNotNull(actualGenre)
+        Assertions.assertTrue(actualGenre.isActive)
+        Assertions.assertNull(actualGenre.deletedAt)
+
+        val actualCreatedAt = actualGenre.createdAt
+        val actualUpdatedAt = actualGenre.updatedAt
+
+        actualGenre.update(expectedName, expectedIsActive, expectedCategories)
+
+        Assertions.assertNotNull(actualGenre.id)
+        Assertions.assertEquals(expectedName, actualGenre.name)
+        Assertions.assertEquals(expectedIsActive, actualGenre.isActive)
+        Assertions.assertEquals(expectedCategories, actualGenre.categories)
+        Assertions.assertEquals(actualCreatedAt, actualGenre.createdAt)
+        Assertions.assertTrue(actualUpdatedAt.isBefore(actualGenre.updatedAt))
+        Assertions.assertNotNull(actualGenre.deletedAt)
+    }
+
+    @Test
+    fun givenAValidGenre_whenCallUpdateWithEmptyName_shouldReceiveNotificationException() {
+        val expectedName = " "
+        val expectedIsActive = true
+        val expectedCategories = listOf(CategoryID.from("123"))
+        val expectedErrorCount = 1
+        val expectedErrorMessage = "'name' should not be empty"
+        val actualGenre = Genre.newGenre("acao", false)
+        val actualException = Assertions.assertThrows<NotificationException>(
+            NotificationException::class.java
+        ) {
+            actualGenre.update(
+                expectedName,
+                expectedIsActive,
+                expectedCategories
+            )
+        }
+
+        Assertions.assertEquals(expectedErrorCount, actualException.errors.size)
+        Assertions.assertEquals(expectedErrorMessage, actualException.errors[0].message)
+    }
+
+    @Test
+    fun givenAValidGenre_whenCallUpdateWithNullName_shouldReceiveNotificationException() {
+        val expectedName: String? = null
+        val expectedIsActive = true
+        val expectedCategories = listOf(CategoryID.from("123"))
+        val expectedErrorCount = 1
+        val expectedErrorMessage = "'name' should not be null"
+        val actualGenre = Genre.newGenre("acao", false)
+        val actualException = Assertions.assertThrows<NotificationException>(
+            NotificationException::class.java
+        ) {
+            actualGenre.update(
+                expectedName,
+                expectedIsActive,
+                expectedCategories
+            )
+        }
+
+        Assertions.assertEquals(expectedErrorCount, actualException.errors.size)
+        Assertions.assertEquals(expectedErrorMessage, actualException.errors[0].message)
     }
 }
