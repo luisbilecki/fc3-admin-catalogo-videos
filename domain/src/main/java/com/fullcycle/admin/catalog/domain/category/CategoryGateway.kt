@@ -1,5 +1,6 @@
 package com.fullcycle.admin.catalog.domain.category
 
+import com.fullcycle.admin.catalog.domain.pagination.SearchQuery
 import com.fullcycle.admin.catalog.domain.pagination.Pagination
 
 interface CategoryGateway {
@@ -12,5 +13,5 @@ interface CategoryGateway {
 
     fun update(category: Category?): Category?
 
-    fun findAll(query: CategorySearchQuery): Pagination<Category>
+    fun findAll(query: SearchQuery): Pagination<Category>
 }

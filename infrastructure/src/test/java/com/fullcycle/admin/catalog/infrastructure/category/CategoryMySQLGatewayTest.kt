@@ -2,7 +2,7 @@ package com.fullcycle.admin.catalog.infrastructure.category
 
 import com.fullcycle.admin.catalog.domain.category.Category
 import com.fullcycle.admin.catalog.domain.category.CategoryID
-import com.fullcycle.admin.catalog.domain.category.CategorySearchQuery
+import com.fullcycle.admin.catalog.domain.pagination.SearchQuery
 import com.fullcycle.admin.catalog.MySQLGatewayTest
 import com.fullcycle.admin.catalog.infrastructure.category.persistence.CategoryJpaEntity
 import com.fullcycle.admin.catalog.infrastructure.category.persistence.CategoryRepository
@@ -205,7 +205,7 @@ open class CategoryMySQLGatewayTest @Autowired constructor(
 
         Assertions.assertEquals(3, categoryRepository.count())
 
-        val query = CategorySearchQuery(0, 1, "", "name", "asc")
+        val query = SearchQuery(0, 1, "", "name", "asc")
         val actualResult = categoryGateway.findAll(query)
 
         Assertions.assertEquals(expectedPage, actualResult.currentPage)
@@ -223,7 +223,7 @@ open class CategoryMySQLGatewayTest @Autowired constructor(
 
         Assertions.assertEquals(0, categoryRepository.count())
 
-        val query = CategorySearchQuery(0, 1, "", "name", "asc")
+        val query = SearchQuery(0, 1, "", "name", "asc")
         val actualResult = categoryGateway.findAll(query)
 
         Assertions.assertEquals(expectedPage, actualResult.currentPage)
@@ -251,7 +251,7 @@ open class CategoryMySQLGatewayTest @Autowired constructor(
 
         Assertions.assertEquals(3, categoryRepository.count())
 
-        var query = CategorySearchQuery(0, 1, "", "name", "asc")
+        var query = SearchQuery(0, 1, "", "name", "asc")
         var actualResult = categoryGateway.findAll(query)
 
         Assertions.assertEquals(expectedPage, actualResult.currentPage)
@@ -262,7 +262,7 @@ open class CategoryMySQLGatewayTest @Autowired constructor(
 
         // Page 1
         expectedPage = 1
-        query = CategorySearchQuery(1, 1, "", "name", "asc")
+        query = SearchQuery(1, 1, "", "name", "asc")
         actualResult = categoryGateway.findAll(query)
         Assertions.assertEquals(expectedPage, actualResult.currentPage)
         Assertions.assertEquals(expectedPerPage, actualResult.perPage)
@@ -272,7 +272,7 @@ open class CategoryMySQLGatewayTest @Autowired constructor(
 
         // Page 2
         expectedPage = 2
-        query = CategorySearchQuery(2, 1, "", "name", "asc")
+        query = SearchQuery(2, 1, "", "name", "asc")
         actualResult = categoryGateway.findAll(query)
         Assertions.assertEquals(expectedPage, actualResult.currentPage)
         Assertions.assertEquals(expectedPerPage, actualResult.perPage)
@@ -300,7 +300,7 @@ open class CategoryMySQLGatewayTest @Autowired constructor(
 
         Assertions.assertEquals(3, categoryRepository.count())
 
-        val query = CategorySearchQuery(0, 1, "doc", "name", "asc")
+        val query = SearchQuery(0, 1, "doc", "name", "asc")
         val actualResult = categoryGateway.findAll(query)
 
         Assertions.assertEquals(expectedPage, actualResult.currentPage)
@@ -329,7 +329,7 @@ open class CategoryMySQLGatewayTest @Autowired constructor(
 
         Assertions.assertEquals(3, categoryRepository.count())
 
-        val query = CategorySearchQuery(0, 1, "MAIS ASSISTIDA", "name", "asc")
+        val query = SearchQuery(0, 1, "MAIS ASSISTIDA", "name", "asc")
         val actualResult = categoryGateway.findAll(query)
 
         Assertions.assertEquals(expectedPage, actualResult.currentPage)

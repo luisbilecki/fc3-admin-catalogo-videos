@@ -2,7 +2,7 @@ package com.fullcycle.admin.catalog.application.category.retrieve.list
 
 import com.fullcycle.admin.catalog.domain.category.Category
 import com.fullcycle.admin.catalog.domain.category.CategoryGateway
-import com.fullcycle.admin.catalog.domain.category.CategorySearchQuery
+import com.fullcycle.admin.catalog.domain.pagination.SearchQuery
 import com.fullcycle.admin.catalog.domain.pagination.Pagination
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -40,7 +40,7 @@ class ListCategoriesUseCaseTest {
         val expectedTerms = ""
         val expectedSort = "createdAt"
         val expectedDirection = "asc"
-        val aQuery = CategorySearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort, expectedDirection)
+        val aQuery = SearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort, expectedDirection)
         val expectedPagination = Pagination(expectedPage, expectedPerPage, categories.size.toLong(), categories)
         val expectedItemsCount = 2
         val expectedResult = expectedPagination.map(CategoryListOutput::from)
@@ -68,7 +68,7 @@ class ListCategoriesUseCaseTest {
         val expectedSort = "createdAt"
         val expectedDirection = "asc"
 
-        val aQuery = CategorySearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort, expectedDirection)
+        val aQuery = SearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort, expectedDirection)
 
         val expectedPagination = Pagination(expectedPage, expectedPerPage, categoriesSize, categories)
 
@@ -96,7 +96,7 @@ class ListCategoriesUseCaseTest {
         val expectedDirection = "asc"
         val expectedErrorMessage = "Gateway error"
 
-        val aQuery = CategorySearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort, expectedDirection)
+        val aQuery = SearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort, expectedDirection)
 
         `when`(categoryGateway.findAll(eq(aQuery)))
                 .thenThrow(IllegalStateException(expectedErrorMessage))

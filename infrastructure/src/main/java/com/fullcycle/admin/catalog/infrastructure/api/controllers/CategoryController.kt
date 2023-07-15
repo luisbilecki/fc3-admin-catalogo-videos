@@ -5,12 +5,11 @@ import com.fullcycle.admin.catalog.application.category.create.CreateCategoryOut
 import com.fullcycle.admin.catalog.application.category.create.CreateCategoryUseCase
 import com.fullcycle.admin.catalog.application.category.delete.DeleteCategoryUseCase
 import com.fullcycle.admin.catalog.application.category.retrieve.get.GetCategoryByIdUseCase
-import com.fullcycle.admin.catalog.application.category.retrieve.list.CategoryListOutput
 import com.fullcycle.admin.catalog.application.category.retrieve.list.ListCategoriesUseCase
 import com.fullcycle.admin.catalog.application.category.update.UpdateCategoryCommand
 import com.fullcycle.admin.catalog.application.category.update.UpdateCategoryOutput
 import com.fullcycle.admin.catalog.application.category.update.UpdateCategoryUseCase
-import com.fullcycle.admin.catalog.domain.category.CategorySearchQuery
+import com.fullcycle.admin.catalog.domain.pagination.SearchQuery
 import com.fullcycle.admin.catalog.domain.pagination.Pagination
 import com.fullcycle.admin.catalog.domain.validation.handler.Notification
 import com.fullcycle.admin.catalog.infrastructure.api.CategoryAPI
@@ -62,7 +61,7 @@ class CategoryController(
         direction: String?
     ): Pagination<CategoryListResponse?> {
         return listCategoriesUseCase.execute(
-            CategorySearchQuery(
+            SearchQuery(
                 page, perPage,
                 search!!, sort!!, direction!!
             )
