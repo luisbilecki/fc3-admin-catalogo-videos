@@ -14,7 +14,7 @@ class Genre private constructor(
     val id: GenreID,
     var name: String?,
     var isActive: Boolean,
-    var categories: List<CategoryID>,
+    var categories: MutableList<CategoryID>,
     val createdAt: Instant,
     var updatedAt: Instant,
     var deletedAt: Instant?
@@ -60,9 +60,28 @@ class Genre private constructor(
             deactivate()
         }
         name = newName
-        categories = newCategories ?: emptyList()
+        categories = (newCategories ?: emptyList()).toMutableList()
         updatedAt = now()
         selfValidate()
+        return this
+    }
+
+
+    fun addCategory(aCategoryID: CategoryID?): Genre? {
+        if (aCategoryID == null) {
+            return this
+        }
+        categories.add(aCategoryID)
+        updatedAt = now()
+        return this
+    }
+
+    fun removeCategory(aCategoryID: CategoryID?): Genre? {
+        if (aCategoryID == null) {
+            return this
+        }
+        categories.remove(aCategoryID)
+        updatedAt = now()
         return this
     }
 
@@ -79,7 +98,7 @@ class Genre private constructor(
             id: GenreID,
             name: String,
             isActive: Boolean,
-            categories: List<CategoryID>,
+            categories: MutableList<CategoryID>,
             createdAt: Instant,
             updatedAt: Instant,
             deletedAt: Instant?

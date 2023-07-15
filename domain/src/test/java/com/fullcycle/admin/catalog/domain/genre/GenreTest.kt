@@ -130,7 +130,7 @@ class GenreTest {
         val expectedName = "Ação"
         val expectedIsActive = true
         val expectedCategories = listOf(CategoryID.from("123"))
-        val actualGenre = Genre.newGenre("acao", false)
+        val actualGenre = Genre.newGenre(expectedName, false)
 
         Assertions.assertNotNull(actualGenre)
         Assertions.assertFalse(actualGenre.isActive)
@@ -155,7 +155,7 @@ class GenreTest {
         val expectedName = "Ação"
         val expectedIsActive = false
         val expectedCategories = listOf(CategoryID.from("123"))
-        val actualGenre = Genre.newGenre("acao", true)
+        val actualGenre = Genre.newGenre(expectedName, true)
 
         Assertions.assertNotNull(actualGenre)
         Assertions.assertTrue(actualGenre.isActive)
@@ -183,7 +183,7 @@ class GenreTest {
         val expectedErrorCount = 1
         val expectedErrorMessage = "'name' should not be empty"
         val actualGenre = Genre.newGenre("acao", false)
-        val actualException = Assertions.assertThrows<NotificationException>(
+        val actualException = Assertions.assertThrows(
             NotificationException::class.java
         ) {
             actualGenre.update(
@@ -205,7 +205,7 @@ class GenreTest {
         val expectedErrorCount = 1
         val expectedErrorMessage = "'name' should not be null"
         val actualGenre = Genre.newGenre("acao", false)
-        val actualException = Assertions.assertThrows<NotificationException>(
+        val actualException = Assertions.assertThrows(
             NotificationException::class.java
         ) {
             actualGenre.update(
@@ -225,7 +225,7 @@ class GenreTest {
         val expectedName = "Ação"
         val expectedIsActive = true
         val expectedCategories = ArrayList<CategoryID>()
-        val actualGenre = Genre.newGenre("acao", expectedIsActive)
+        val actualGenre = Genre.newGenre(expectedName, expectedIsActive)
         val actualCreatedAt = actualGenre.createdAt
         val actualUpdatedAt = actualGenre.updatedAt
         
@@ -254,7 +254,7 @@ class GenreTest {
         val expectedIsActive = true
         val expectedCategories = listOf(seriesID, moviesID)
         
-        val actualGenre = Genre.newGenre("acao", expectedIsActive)
+        val actualGenre = Genre.newGenre(expectedName, expectedIsActive)
         
         Assertions.assertEquals(0, actualGenre.categories.size)
         
@@ -281,7 +281,7 @@ class GenreTest {
         val expectedIsActive = true
         val expectedCategories = ArrayList<CategoryID>()
         
-        val actualGenre = Genre.newGenre("acao", expectedIsActive)
+        val actualGenre = Genre.newGenre(expectedName, expectedIsActive)
         
         Assertions.assertEquals(0, actualGenre.categories.size)
         
@@ -294,7 +294,7 @@ class GenreTest {
         Assertions.assertEquals(expectedIsActive, actualGenre.isActive)
         Assertions.assertEquals(expectedCategories, actualGenre.categories)
         Assertions.assertEquals(actualCreatedAt, actualGenre.createdAt)
-        Assertions.assertTrue(actualUpdatedAt.isBefore(actualGenre.updatedAt))
+        Assertions.assertEquals(actualUpdatedAt, actualGenre.updatedAt)
         Assertions.assertNull(actualGenre.deletedAt)
     }
 
@@ -305,7 +305,7 @@ class GenreTest {
         val expectedName = "Ação"
         val expectedIsActive = true
         val expectedCategories = listOf(moviesID)
-        val actualGenre = Genre.newGenre("acao", expectedIsActive)
+        val actualGenre = Genre.newGenre(expectedName, expectedIsActive)
 
         actualGenre.update(expectedName, expectedIsActive, List.of(seriesID, moviesID))
 
@@ -332,7 +332,7 @@ class GenreTest {
         val expectedName = "Ação"
         val expectedIsActive = true
         val expectedCategories = listOf(seriesID, moviesID)
-        val actualGenre = Genre.newGenre("acao", expectedIsActive)
+        val actualGenre = Genre.newGenre(expectedName, expectedIsActive)
 
         actualGenre.update(expectedName, expectedIsActive, expectedCategories)
 
@@ -348,7 +348,7 @@ class GenreTest {
         Assertions.assertEquals(expectedIsActive, actualGenre.isActive)
         Assertions.assertEquals(expectedCategories, actualGenre.categories)
         Assertions.assertEquals(actualCreatedAt, actualGenre.createdAt)
-        Assertions.assertTrue(actualUpdatedAt.isBefore(actualGenre.updatedAt))
+        Assertions.assertEquals(actualUpdatedAt, actualGenre.updatedAt)
         Assertions.assertNull(actualGenre.deletedAt)
     }
 }
