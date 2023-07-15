@@ -3,6 +3,8 @@ package com.fullcycle.admin.catalog.domain.genre
 import com.fullcycle.admin.catalog.domain.AggregateRoot
 import com.fullcycle.admin.catalog.domain.category.CategoryID
 import com.fullcycle.admin.catalog.domain.exceptions.NotificationException
+import com.fullcycle.admin.catalog.domain.utils.InstantUtils
+import com.fullcycle.admin.catalog.domain.utils.InstantUtils.now
 import com.fullcycle.admin.catalog.domain.validation.ValidationHandler
 import com.fullcycle.admin.catalog.domain.validation.handler.Notification
 import com.fullcycle.admin.catalog.domain.validation.hasError
@@ -13,11 +15,11 @@ import java.util.*
 class Genre private constructor(
     val id: GenreID,
     val name: String?,
-    val isActive: Boolean,
+    var isActive: Boolean,
     val categories: List<CategoryID>,
     val createdAt: Instant,
-    val updatedAt: Instant,
-    val deletedAt: Instant?
+    var updatedAt: Instant,
+    var deletedAt: Instant?
 ) : AggregateRoot<GenreID>(id) {
 
     init {
@@ -33,10 +35,26 @@ class Genre private constructor(
         GenreValidator(this, handler).validate()
     }
 
+    fun deactivate(): Genre? {
+        if (deletedAt == null) {
+            deletedAt = now()
+        }
+        isActive = false
+        updatedAt = now()
+        return this
+    }
+
+    fun activate(): Genre? {
+        deletedAt = null
+        isActive = true
+        updatedAt = now()
+        return this
+    }
+
     companion object {
         fun newGenre(name: String?, isActive: Boolean): Genre {
             val id = GenreID.unique()
-            val now = Instant.now()
+            val now = InstantUtils.now()
             val deletedAt = if (isActive) null else now
 
             return Genre(id, name, isActive, ArrayList(), now, now, deletedAt)
