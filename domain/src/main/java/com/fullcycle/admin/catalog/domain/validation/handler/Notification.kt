@@ -5,6 +5,7 @@ import com.fullcycle.admin.catalog.domain.validation.Error
 import com.fullcycle.admin.catalog.domain.validation.Validation
 import com.fullcycle.admin.catalog.domain.validation.ValidationHandler
 
+
 class Notification private constructor(private val errors: MutableList<Error>) : ValidationHandler {
 
     override fun append(error: Error): Notification {
@@ -17,15 +18,15 @@ class Notification private constructor(private val errors: MutableList<Error>) :
         return this
     }
 
-    override fun validate(validation: Validation): Notification {
+    override fun <T> validate(aValidation: Validation<T>): T? {
         try {
-            validation.validate()
+            return aValidation.validate()
         } catch (ex: DomainException) {
             errors.addAll(ex.errors)
         } catch (t: Throwable) {
             errors.add(Error(t.message ?: ""))
         }
-        return this
+        return null
     }
 
     override fun getErrors(): List<Error> {

@@ -1,5 +1,6 @@
 package com.fullcycle.admin.catalog.application.genre.create
 
+import com.fullcycle.admin.catalog.domain.category.CategoryGateway
 import com.fullcycle.admin.catalog.domain.category.CategoryID
 import com.fullcycle.admin.catalog.domain.genre.Genre
 import com.fullcycle.admin.catalog.domain.genre.GenreGateway
@@ -28,6 +29,7 @@ class CreateGenreUseCaseTest {
 
     @Mock
     private lateinit var genreGateway: GenreGateway
+
     @Test
     fun givenAValidCommand_whenCallsCreateGenre_shouldReturnGenreId() {
         val expectName = "Ação"
