@@ -38,13 +38,15 @@ class DefaultCreateGenreUseCase(
                 name,
                 isActive
             )
-        }!!
+        }
 
         if (notification.hasError()) {
             throw NotificationException("Could not create Aggregate Genre", notification)
         }
 
-        return CreateGenreOutput.from(genreGateway.create(genre)!!)
+        genre?.addCategories(categories)
+
+        return CreateGenreOutput.from(genreGateway.create(genre!!))
     }
 
     private fun validateCategories(ids: List<CategoryID>?): ValidationHandler {
