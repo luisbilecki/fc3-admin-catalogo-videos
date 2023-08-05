@@ -15,6 +15,7 @@ import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.times
 
 class DeleteGenreUseCaseTest : UseCaseTest() {
+
     @InjectMocks
     private lateinit var useCase: DefaultDeleteGenreUseCase
 
@@ -57,13 +58,13 @@ class DeleteGenreUseCaseTest : UseCaseTest() {
     @Test
     fun givenAValidGenreId_whenCallsDeleteGenreAndGatewayThrowsUnexpectedError_shouldReceiveException() {
         val genre = Genre.newGenre("Ação", true)
-        val expectedId = genre.getId()
+        val expectedId = genre.id
         doThrow(IllegalStateException("Gateway error"))
             .`when`(genreGateway).deleteById(any())
 
         Assertions.assertThrows(
             IllegalStateException::class.java
-        ) { useCase.execute(expectedId.getValue()) }
+        ) { useCase.execute(expectedId.value) }
 
         Mockito.verify(genreGateway, times(1)).deleteById(expectedId)
     }
