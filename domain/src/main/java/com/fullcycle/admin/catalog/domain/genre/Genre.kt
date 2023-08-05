@@ -76,7 +76,7 @@ class Genre private constructor(
         return this
     }
 
-    fun addCategories(categories: List<CategoryID>): Genre? {
+    fun addCategories(categories: List<CategoryID>): Genre {
         if (categories.isNullOrEmpty()) {
             return this
         }
