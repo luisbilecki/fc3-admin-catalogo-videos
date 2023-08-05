@@ -25,7 +25,7 @@ class GetGenreByIdUseCaseTest : UseCaseTest() {
     private lateinit var genreGateway: GenreGateway
 
     override val mocks: List<Any?>
-       get() = listOf(genreGateway)
+        get() = listOf(genreGateway)
 
     @Test
     fun givenAValidId_whenCallsGetGenre_shouldReturnGenre() {
@@ -43,13 +43,13 @@ class GetGenreByIdUseCaseTest : UseCaseTest() {
 
         val actualGenre = useCase.execute(expectedId.value)
 
-        Assertions.assertEquals(expectedId.value, actualGenre.id())
-        Assertions.assertEquals(expectedName, actualGenre.name())
-        Assertions.assertEquals(expectedIsActive, actualGenre.isActive())
-        Assertions.assertEquals(asString(expectedCategories), actualGenre.categories())
-        Assertions.assertEquals(genre.createdAt, actualGenre.createdAt())
-        Assertions.assertEquals(genre.updatedAt, actualGenre.updatedAt())
-        Assertions.assertEquals(genre.deletedAt, actualGenre.deletedAt())
+        Assertions.assertEquals(expectedId.value, actualGenre.id)
+        Assertions.assertEquals(expectedName, actualGenre.name)
+        Assertions.assertEquals(expectedIsActive, actualGenre.isActive)
+        Assertions.assertEquals(asString(expectedCategories), actualGenre.categories)
+        Assertions.assertEquals(genre.createdAt, actualGenre.createdAt)
+        Assertions.assertEquals(genre.updatedAt, actualGenre.updatedAt)
+        Assertions.assertEquals(genre.deletedAt, actualGenre.deletedAt)
         Mockito.verify(genreGateway, times(1)).findById(eq(expectedId))
     }
 
