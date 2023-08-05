@@ -1,34 +1,30 @@
 package com.fullcycle.admin.catalog.application.category.delete
 
+import com.fullcycle.admin.catalog.application.UseCaseTest
 import com.fullcycle.admin.catalog.domain.category.Category
 import com.fullcycle.admin.catalog.domain.category.CategoryGateway
 import com.fullcycle.admin.catalog.domain.category.CategoryID
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.Mockito.doNothing
-import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.times
 
 
-@ExtendWith(MockitoExtension::class)
-class DeleteCategoryUseCaseTest {
+class DeleteCategoryUseCaseTest : UseCaseTest() {
 
     @InjectMocks
     private lateinit var useCase: DefaultDeleteCategoryUseCase
 
     @Mock
     private lateinit var categoryGateway: CategoryGateway
-    @BeforeEach
-    fun cleanUp() {
-        Mockito.reset(categoryGateway)
-    }
+
+    override val mocks: List<Any?>
+        get() = listOf(categoryGateway)
 
     @Test
     fun givenAValidId_whenCallsDeleteCategory_shouldBeOK() {

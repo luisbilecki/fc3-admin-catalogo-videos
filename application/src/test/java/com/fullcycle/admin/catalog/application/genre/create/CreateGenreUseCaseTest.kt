@@ -1,5 +1,6 @@
 package com.fullcycle.admin.catalog.application.genre.create
 
+import com.fullcycle.admin.catalog.application.UseCaseTest
 import com.fullcycle.admin.catalog.domain.category.CategoryGateway
 import com.fullcycle.admin.catalog.domain.category.CategoryID
 import com.fullcycle.admin.catalog.domain.exceptions.NotificationException
@@ -7,20 +8,17 @@ import com.fullcycle.admin.catalog.domain.genre.Genre
 import com.fullcycle.admin.catalog.domain.genre.GenreGateway
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.AdditionalAnswers.returnsFirstArg
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.Mockito.`when`
-import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argThat
 import org.mockito.kotlin.times
 import java.util.*
 
-@ExtendWith(MockitoExtension::class)
-class CreateGenreUseCaseTest {
+class CreateGenreUseCaseTest : UseCaseTest() {
 
     @InjectMocks
     private lateinit var useCase: DefaultCreateGenreUseCase
@@ -30,6 +28,9 @@ class CreateGenreUseCaseTest {
 
     @Mock
     private lateinit var genreGateway: GenreGateway
+
+    override val mocks: List<Any?>
+        get() = listOf(categoryGateway, genreGateway)
 
     @Test
     fun givenAValidCommand_whenCallsCreateGenre_shouldReturnGenreId() {
