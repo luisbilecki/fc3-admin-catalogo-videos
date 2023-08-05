@@ -6,7 +6,7 @@ interface ValidationHandler {
 
     fun append(handler: ValidationHandler): ValidationHandler
 
-    fun validate(validation: Validation): ValidationHandler
+    fun <T> validate(aValidation: Validation<T>): T?
 
     fun getErrors(): List<Error>
 
@@ -24,7 +24,7 @@ fun ValidationHandler.firstError(): Error? {
     }
 }
 
-interface Validation {
+fun interface Validation<T> {
 
-    fun validate()
+    fun validate(): T
 }

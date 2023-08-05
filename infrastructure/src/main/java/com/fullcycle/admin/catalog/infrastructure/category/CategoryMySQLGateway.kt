@@ -3,8 +3,8 @@ package com.fullcycle.admin.catalog.infrastructure.category
 import com.fullcycle.admin.catalog.domain.category.Category
 import com.fullcycle.admin.catalog.domain.category.CategoryGateway
 import com.fullcycle.admin.catalog.domain.category.CategoryID
-import com.fullcycle.admin.catalog.domain.pagination.SearchQuery
 import com.fullcycle.admin.catalog.domain.pagination.Pagination
+import com.fullcycle.admin.catalog.domain.pagination.SearchQuery
 import com.fullcycle.admin.catalog.infrastructure.category.persistence.CategoryJpaEntity
 import com.fullcycle.admin.catalog.infrastructure.category.persistence.CategoryRepository
 import com.fullcycle.admin.catalog.infrastructure.utils.SpecificationUtils.like
@@ -31,6 +31,11 @@ class CategoryMySQLGateway(private val repository: CategoryRepository) : Categor
         .findById(id.value)
         .map(CategoryJpaEntity::toAggregate)
         .orElse(null)
+
+    override fun existsByIds(ids: Iterable<CategoryID>): List<CategoryID> {
+        // TODO: Implementar quando chegar na camada de infraestrutura de Genre.
+        return Collections.emptyList()
+    }
 
     override fun update(category: Category?) = save(category)
 

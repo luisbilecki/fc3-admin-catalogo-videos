@@ -76,6 +76,16 @@ class Genre private constructor(
         return this
     }
 
+    fun addCategories(categories: List<CategoryID>): Genre {
+        if (categories.isNullOrEmpty()) {
+            return this
+        }
+
+        this.categories.addAll(categories)
+        updatedAt = now()
+        return this
+    }
+
     fun removeCategory(aCategoryID: CategoryID?): Genre? {
         if (aCategoryID == null) {
             return this
