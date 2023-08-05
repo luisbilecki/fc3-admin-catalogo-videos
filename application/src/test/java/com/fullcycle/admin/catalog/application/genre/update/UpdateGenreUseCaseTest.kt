@@ -17,10 +17,10 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.argThat
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.times
-import java.util.Objects
+import java.util.*
 
 @ExtendWith(MockitoExtension::class)
-class UpdateGenreUseCase {
+class UpdateGenreUseCaseTest {
 
     @InjectMocks
     private lateinit var useCase: DefaultUpdateGenreUseCase
@@ -42,7 +42,7 @@ class UpdateGenreUseCase {
             expectedId.value,
             expectedName,
             expectedIsActive,
-            expectedCategories
+            asString(expectedCategories)
         )
         `when`(genreGateway.findById(any()))
             .thenReturn(Genre.with(genre))
@@ -52,7 +52,7 @@ class UpdateGenreUseCase {
         val actualOutput = useCase.execute(command)
 
         Assertions.assertNotNull(actualOutput)
-        Assertions.assertEquals(expectedId.value, actualOutput.id())
+        Assertions.assertEquals(expectedId.value, actualOutput.id)
         Mockito.verify(genreGateway, times(1)).findById(eq(expectedId))
         Mockito.verify(genreGateway, times(1))
             .update(argThat { updatedGenre ->
@@ -62,4 +62,8 @@ class UpdateGenreUseCase {
                         && Objects.isNull(updatedGenre.deletedAt))
             })
     }
+
+    private fun asString(ids: List<CategoryID>) = ids.stream()
+        .map(CategoryID::value)
+        .toList()
 }
