@@ -37,14 +37,14 @@ class ListGenreUseCaseTest : UseCaseTest() {
         val expectedTerms = "A"
         val expectedSort = "createdAt"
         val expectedDirection = "asc"
-        val expectedTotal = 2
+        val expectedTotal = 2L
         val expectedItems = genres.stream()
             .map(GenreListOutput::from)
             .toList()
         val expectedPagination = Pagination(
             expectedPage,
             expectedPerPage,
-            expectedTotal.toLong(),
+            expectedTotal,
             genres
         )
 
@@ -57,7 +57,7 @@ class ListGenreUseCaseTest : UseCaseTest() {
 
         Assertions.assertEquals(expectedPage, actualOutput.currentPage)
         Assertions.assertEquals(expectedPerPage, actualOutput.perPage)
-        Assertions.assertEquals(expectedTotal, actualOutput.totalItems)
+        Assertions.assertEquals(expectedTotal, actualOutput.total)
         Assertions.assertEquals(expectedItems, actualOutput.items)
         Mockito.verify(genreGateway, times(1)).findAll(eq(query))
     }
@@ -70,12 +70,12 @@ class ListGenreUseCaseTest : UseCaseTest() {
         val expectedTerms = "A"
         val expectedSort = "createdAt"
         val expectedDirection = "asc"
-        val expectedTotal = 0
+        val expectedTotal = 0L
         val expectedItems = listOf<GenreListOutput>()
         val expectedPagination = Pagination(
             expectedPage,
             expectedPerPage,
-            expectedTotal.toLong(),
+            expectedTotal,
             genres
         )
 
@@ -88,7 +88,7 @@ class ListGenreUseCaseTest : UseCaseTest() {
 
         Assertions.assertEquals(expectedPage, actualOutput.currentPage)
         Assertions.assertEquals(expectedPerPage, actualOutput.perPage)
-        Assertions.assertEquals(expectedTotal, actualOutput.totalItems)
+        Assertions.assertEquals(expectedTotal, actualOutput.total)
         Assertions.assertEquals(expectedItems, actualOutput.items)
         Mockito.verify(genreGateway, times(1)).findAll(eq(query))
     }
