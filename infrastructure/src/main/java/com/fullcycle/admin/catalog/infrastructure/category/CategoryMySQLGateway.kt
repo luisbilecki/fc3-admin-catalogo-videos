@@ -11,11 +11,10 @@ import com.fullcycle.admin.catalog.infrastructure.utils.SpecificationUtils.like
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.domain.Specification
-import org.springframework.stereotype.Service
+import org.springframework.stereotype.Component
 import java.util.*
 
-
-@Service
+@Component
 class CategoryMySQLGateway(private val repository: CategoryRepository) : CategoryGateway {
 
     override fun create(category: Category?) = save(category)
