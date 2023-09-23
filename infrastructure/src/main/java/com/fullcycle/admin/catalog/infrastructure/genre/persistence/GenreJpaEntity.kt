@@ -58,23 +58,21 @@ class GenreJpaEntity {
         this.deletedAt = deletedAt
     }
 
-    fun toAggregate(): Genre {
-        return Genre.with(
-            GenreID.from(id!!),
-            name!!,
-            isActive,
-            getCategories()!!.stream()
-                .map{ it: GenreCategoryJpaEntity ->
-                    CategoryID.from(
-                        it.id?.categoryId!!
-                    )
-                }
-                .toList(),
-            createdAt!!,
-            updatedAt!!,
-            deletedAt
-        )
-    }
+    fun toAggregate() = Genre.with(
+        GenreID.from(id!!),
+        name!!,
+        isActive,
+        getCategories()!!.stream()
+            .map{ it: GenreCategoryJpaEntity ->
+                CategoryID.from(
+                    it.id?.categoryId!!
+                )
+            }
+            .toList(),
+        createdAt!!,
+        updatedAt!!,
+        deletedAt
+    )
 
     private fun addCategory(id: CategoryID) {
         categories!!.add(GenreCategoryJpaEntity.from(this, id))

@@ -22,7 +22,10 @@ class GenreMySQLGateway(private val repository: GenreRepository) : GenreGateway 
         }
     }
 
-    override fun findById(id: GenreID) = null
+    override fun findById(id: GenreID): Genre? = repository
+        .findById(id.value)
+        .map(GenreJpaEntity::toAggregate)
+        .orElse(null)
 
     override fun update(genre: Genre) = save(genre)
 

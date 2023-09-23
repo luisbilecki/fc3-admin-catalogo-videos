@@ -275,7 +275,7 @@ open class GenreMySQLGatewayTest @Autowired constructor(
         Assertions.assertEquals(expectedId, actualGenre.id)
         Assertions.assertEquals(expectedName, actualGenre.name)
         Assertions.assertEquals(expectedIsActive, actualGenre.isActive)
-        Assertions.assertEquals(expectedCategories, actualGenre.categories)
+        Assertions.assertEquals(sorted(expectedCategories), sorted(actualGenre.categories))
         Assertions.assertEquals(genre.createdAt, actualGenre.createdAt)
         Assertions.assertEquals(genre.updatedAt, actualGenre.updatedAt)
         Assertions.assertNull(actualGenre.deletedAt)
