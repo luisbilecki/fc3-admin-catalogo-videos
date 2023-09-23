@@ -15,11 +15,10 @@ class GenreMySQLGateway(private val repository: GenreRepository) : GenreGateway 
     override fun create(genre: Genre) = save(genre)
 
     override fun deleteById(id: GenreID) {}
+
     override fun findById(id: GenreID) = null
 
-    override fun update(genre: Genre): Genre? {
-        return null
-    }
+    override fun update(genre: Genre) = save(genre)
 
     override fun findAll(query: SearchQuery) = Pagination<Genre>(0,0,0, emptyList())
 
