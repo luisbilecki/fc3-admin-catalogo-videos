@@ -11,6 +11,8 @@ import javax.persistence.*
 @Entity
 @Table(name = "genres")
 class GenreJpaEntity {
+
+    @Id
     @Column(name = "id", nullable = false)
     var id: String? = null
         private set
@@ -64,7 +66,7 @@ class GenreJpaEntity {
             getCategories()!!.stream()
                 .map{ it: GenreCategoryJpaEntity ->
                     CategoryID.from(
-                        it.id.categoryId!!
+                        it.id?.categoryId!!
                     )
                 }
                 .toList(),
