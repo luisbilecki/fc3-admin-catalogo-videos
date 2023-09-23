@@ -12,9 +12,15 @@ import org.springframework.stereotype.Component
 
 @Component
 class GenreMySQLGateway(private val repository: GenreRepository) : GenreGateway {
+
     override fun create(genre: Genre) = save(genre)
 
-    override fun deleteById(id: GenreID) {}
+    override fun deleteById(id: GenreID) {
+        val idValue = id.value
+        if (repository.existsById(idValue)) {
+            repository.deleteById(idValue)
+        }
+    }
 
     override fun findById(id: GenreID) = null
 
