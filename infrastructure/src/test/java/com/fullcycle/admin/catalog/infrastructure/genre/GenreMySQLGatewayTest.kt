@@ -256,6 +256,40 @@ open class GenreMySQLGatewayTest @Autowired constructor(
         Assertions.assertEquals(0, genreRepository.count())
     }
 
+    @Test
+    fun givenAPrePersistedGenre_whenCallsFindById_shouldReturnGenre() {
+        val movies = categoryGateway.create(Category.newCategory("Filmes", null, true))
+        val series = categoryGateway.create(Category.newCategory("Séries", null, true))
+        val expectedName = "Ação"
+        val expectedIsActive = true
+        val expectedCategories = java.util.List.of(movies!!.id, series!!.id)
+        val genre = Genre.newGenre(expectedName, expectedIsActive)
+        genre.addCategories(expectedCategories)
+        val expectedId = genre.id
+
+        genreRepository.saveAndFlush(GenreJpaEntity.from(genre))
+        Assertions.assertEquals(1, genreRepository.count())
+
+        val actualGenre = genreGateway.findById(expectedId)!!
+
+        Assertions.assertEquals(expectedId, actualGenre.id)
+        Assertions.assertEquals(expectedName, actualGenre.name)
+        Assertions.assertEquals(expectedIsActive, actualGenre.isActive)
+        Assertions.assertEquals(expectedCategories, actualGenre.categories)
+        Assertions.assertEquals(genre.createdAt, actualGenre.createdAt)
+        Assertions.assertEquals(genre.updatedAt, actualGenre.updatedAt)
+        Assertions.assertNull(actualGenre.deletedAt)
+    }
+
+    @Test
+    fun givenAInvalidGenreId_whenCallsFindById_shouldReturnEmpty() {
+        val expectedId = GenreID.from("123")
+        Assertions.assertEquals(0, genreRepository.count())
+
+        val actualGenre = genreGateway.findById(expectedId)
+        Assertions.assertTrue(actualGenre != null)
+    }
+
     private fun sorted(expectedCategories: List<CategoryID>) = expectedCategories.stream()
         .sorted(Comparator.comparing(CategoryID::value))
         .toList()
