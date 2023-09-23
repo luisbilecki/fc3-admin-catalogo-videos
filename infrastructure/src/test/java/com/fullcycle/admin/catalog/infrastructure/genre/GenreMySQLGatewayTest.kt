@@ -4,6 +4,7 @@ import com.fullcycle.admin.catalog.MySQLGatewayTest
 import com.fullcycle.admin.catalog.domain.category.Category
 import com.fullcycle.admin.catalog.domain.category.CategoryID
 import com.fullcycle.admin.catalog.domain.genre.Genre
+import com.fullcycle.admin.catalog.domain.genre.GenreID
 import com.fullcycle.admin.catalog.infrastructure.category.CategoryMySQLGateway
 import com.fullcycle.admin.catalog.infrastructure.genre.persistence.GenreJpaEntity
 import com.fullcycle.admin.catalog.infrastructure.genre.persistence.GenreRepository
@@ -89,9 +90,8 @@ open class GenreMySQLGatewayTest @Autowired constructor(
         Assertions.assertNull(persistedGenre.deletedAt)
     }
 
-
     @Test
-    open fun givenAValidGenreWithoutCategories_whenCallsUpdateGenreWithCategories_shouldPersistGenre() {
+     fun givenAValidGenreWithoutCategories_whenCallsUpdateGenreWithCategories_shouldPersistGenre() {
         val movies = categoryGateway.create(Category.newCategory("Filmes", null, true))
         val series = categoryGateway.create(Category.newCategory("Séries", null, true))
         val expectedName = "Ação"
@@ -130,7 +130,7 @@ open class GenreMySQLGatewayTest @Autowired constructor(
     }
 
     @Test
-    open fun givenAValidGenreWithCategories_whenCallsUpdateGenreCleaningCategories_shouldPersistGenre() {
+    fun givenAValidGenreWithCategories_whenCallsUpdateGenreCleaningCategories_shouldPersistGenre() {
         val movies = categoryGateway.create(Category.newCategory("Filmes", null, true))
         val series = categoryGateway.create(Category.newCategory("Séries", null, true))
         val expectedName = "Ação"
@@ -168,7 +168,7 @@ open class GenreMySQLGatewayTest @Autowired constructor(
     }
 
     @Test
-    open fun givenAValidGenreInactive_whenCallsUpdateGenreActivating_shouldPersistGenre() {
+    fun givenAValidGenreInactive_whenCallsUpdateGenreActivating_shouldPersistGenre() {
         val expectedName = "Ação"
         val expectedIsActive = true
         val expectedCategories = listOf<CategoryID>()
@@ -203,7 +203,7 @@ open class GenreMySQLGatewayTest @Autowired constructor(
     }
 
     @Test
-    open fun givenAValidGenreActive_whenCallsUpdateGenreInactivating_shouldPersistGenre() {
+    fun givenAValidGenreActive_whenCallsUpdateGenreInactivating_shouldPersistGenre() {
         val expectedName = "Ação"
         val expectedIsActive = false
         val expectedCategories = listOf<CategoryID>()
@@ -237,6 +237,23 @@ open class GenreMySQLGatewayTest @Autowired constructor(
         Assertions.assertTrue(genre.updatedAt.isBefore(persistedGenre.updatedAt))
         Assertions.assertEquals(genre.deletedAt, persistedGenre.deletedAt)
         Assertions.assertNotNull(persistedGenre.deletedAt)
+    }
+
+    @Test
+    fun givenAPrePersistedGenre_whenCallsDeleteById_shouldDeleteGenre() {
+        val genre = Genre.newGenre("Ação", true)
+        genreRepository.saveAndFlush(GenreJpaEntity.from(genre))
+        Assertions.assertEquals(1, genreRepository.count())
+
+        genreGateway.deleteById(genre.id)
+        Assertions.assertEquals(0, genreRepository.count())
+    }
+
+    @Test
+    fun givenAnInvalidGenre_whenCallsDeleteById_shouldReturnOK() {
+        Assertions.assertEquals(0, genreRepository.count())
+        genreGateway.deleteById(GenreID.from("123"))
+        Assertions.assertEquals(0, genreRepository.count())
     }
 
     private fun sorted(expectedCategories: List<CategoryID>) = expectedCategories.stream()
