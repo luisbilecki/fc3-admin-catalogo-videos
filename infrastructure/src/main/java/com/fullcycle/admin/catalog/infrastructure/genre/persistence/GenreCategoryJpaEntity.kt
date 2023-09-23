@@ -43,8 +43,8 @@ class GenreCategoryJpaEntity {
     }
 
     companion object {
-        fun from(aGenre: GenreJpaEntity, aCategoryId: CategoryID): GenreCategoryJpaEntity {
-            return GenreCategoryJpaEntity(aGenre, aCategoryId)
+        fun from(genre: GenreJpaEntity, category: CategoryID): GenreCategoryJpaEntity {
+            return GenreCategoryJpaEntity(genre, category)
         }
     }
 }

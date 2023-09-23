@@ -76,12 +76,21 @@ class GenreJpaEntity {
         )
     }
 
-    private fun addCategory(anId: CategoryID) {
-        categories!!.add(GenreCategoryJpaEntity.from(this, anId))
+    private fun addCategory(id: CategoryID) {
+        categories!!.add(GenreCategoryJpaEntity.from(this, id))
     }
 
-    private fun removeCategory(anId: CategoryID) {
-        categories!!.remove(GenreCategoryJpaEntity.from(this, anId))
+    private fun removeCategory(id: CategoryID) {
+        categories!!.remove(GenreCategoryJpaEntity.from(this, id))
+    }
+    fun getCategoryIDs(): List<CategoryID> {
+        return getCategories()!!.stream()
+            .map { it: GenreCategoryJpaEntity ->
+                CategoryID.from(
+                    it.id!!.categoryId!!
+                )
+            }
+            .toList()
     }
 
     fun setId(id: String?): GenreJpaEntity {

@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
-
 @MySQLGatewayTest
 open class CategoryMySQLGatewayTest @Autowired constructor(
     private val categoryGateway: CategoryMySQLGateway,
