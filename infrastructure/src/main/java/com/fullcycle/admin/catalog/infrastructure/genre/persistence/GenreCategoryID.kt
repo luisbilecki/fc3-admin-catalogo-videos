@@ -1,12 +1,13 @@
 package com.fullcycle.admin.catalog.infrastructure.genre.persistence
 
+import java.io.Serializable
 import java.util.*
 import javax.persistence.Column
 import javax.persistence.Embeddable
 
 
 @Embeddable
-class GenreCategoryID {
+class GenreCategoryID : Serializable {
     @Column(name = "genre_id", nullable = false)
     var genreId: String? = null
         private set
@@ -21,17 +22,6 @@ class GenreCategoryID {
         categoryId = aCategoryId
     }
 
-    override fun equals(o: Any?): Boolean {
-        if (this === o) return true
-        if (o == null || javaClass != o.javaClass) return false
-        val that = o as GenreCategoryID
-        return genreId == that.genreId && categoryId == that.categoryId
-    }
-
-    override fun hashCode(): Int {
-        return Objects.hash(genreId, categoryId)
-    }
-
     fun setGenreId(genreId: String?): GenreCategoryID {
         this.genreId = genreId
         return this
@@ -43,8 +33,6 @@ class GenreCategoryID {
     }
 
     companion object {
-        fun from(aGenreId: String, aCategoryId: String): GenreCategoryID {
-            return GenreCategoryID(aGenreId, aCategoryId)
-        }
+        fun from(genreId: String, categoryId: String) = GenreCategoryID(genreId, categoryId)
     }
 }

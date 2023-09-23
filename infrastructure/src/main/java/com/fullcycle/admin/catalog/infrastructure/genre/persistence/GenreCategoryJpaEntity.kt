@@ -9,15 +9,15 @@ import javax.persistence.*
 @Table(name = "genres_categories")
 class GenreCategoryJpaEntity {
     @EmbeddedId
-    var id: GenreCategoryID = null
+    var id: GenreCategoryID? = null
 
     @ManyToOne
     @MapsId("genreId")
-    val genre: GenreJpaEntity = null
+    var genre: GenreJpaEntity? = null
 
     constructor()
     private constructor(genre: GenreJpaEntity, categoryId: CategoryID) {
-        id = GenreCategoryID.from(genre.getId(), categoryId.value)
+        id = GenreCategoryID.from(genre.id!!, categoryId.value)
         this.genre = genre
     }
 
