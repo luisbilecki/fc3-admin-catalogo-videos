@@ -14,6 +14,7 @@ import org.springframework.data.jpa.domain.Specification
 import org.springframework.stereotype.Component
 import java.util.*
 
+
 @Component
 class CategoryMySQLGateway(private val repository: CategoryRepository) : CategoryGateway {
 
@@ -47,12 +48,7 @@ class CategoryMySQLGateway(private val repository: CategoryRepository) : Categor
 
         val specifications = Optional.ofNullable(query.terms)
             .filter { str -> str.isNotBlank() }
-            .map { str ->
-                val nameLike: Specification<CategoryJpaEntity> = like("name", str)
-                val descriptionLike: Specification<CategoryJpaEntity> =
-                    like("description", str)
-                nameLike.or(descriptionLike)
-            }
+            .map(::assembleSpecification)
             .orElse(null)
 
         val pageResult = repository.findAll(Specification.where(specifications), page)
@@ -72,5 +68,11 @@ class CategoryMySQLGateway(private val repository: CategoryRepository) : Categor
         return repository
             .save(CategoryJpaEntity.from(category))
             .toAggregate()
+    }
+
+    private fun assembleSpecification(str: String): Specification<CategoryJpaEntity>? {
+        val nameLike: Specification<CategoryJpaEntity> = like("name", str)
+        val descriptionLike: Specification<CategoryJpaEntity> = like("description", str)
+        return nameLike.or(descriptionLike)
     }
 }
