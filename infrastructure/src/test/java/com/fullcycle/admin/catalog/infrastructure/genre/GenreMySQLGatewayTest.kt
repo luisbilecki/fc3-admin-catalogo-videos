@@ -5,11 +5,14 @@ import com.fullcycle.admin.catalog.domain.category.Category
 import com.fullcycle.admin.catalog.domain.category.CategoryID
 import com.fullcycle.admin.catalog.domain.genre.Genre
 import com.fullcycle.admin.catalog.domain.genre.GenreID
+import com.fullcycle.admin.catalog.domain.pagination.SearchQuery
 import com.fullcycle.admin.catalog.infrastructure.category.CategoryMySQLGateway
 import com.fullcycle.admin.catalog.infrastructure.genre.persistence.GenreJpaEntity
 import com.fullcycle.admin.catalog.infrastructure.genre.persistence.GenreRepository
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 import org.springframework.beans.factory.annotation.Autowired
 
 
@@ -91,7 +94,7 @@ open class GenreMySQLGatewayTest @Autowired constructor(
     }
 
     @Test
-     fun givenAValidGenreWithoutCategories_whenCallsUpdateGenreWithCategories_shouldPersistGenre() {
+    fun givenAValidGenreWithoutCategories_whenCallsUpdateGenreWithCategories_shouldPersistGenre() {
         val movies = categoryGateway.create(Category.newCategory("Filmes", null, true))
         val series = categoryGateway.create(Category.newCategory("Séries", null, true))
         val expectedName = "Ação"
@@ -288,6 +291,129 @@ open class GenreMySQLGatewayTest @Autowired constructor(
 
         val actualGenre = genreGateway.findById(expectedId)
         Assertions.assertTrue(actualGenre != null)
+    }
+
+    @Test
+    fun givenEmptyGenres_whenCallFindAll_shouldReturnEmptyList() {
+        val expectedPage = 0
+        val expectedPerPage = 1
+        val expectedTerms = ""
+        val expectedSort = "name"
+        val expectedDirection = "asc"
+        val expectedTotal = 0
+        val query = SearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort, expectedDirection)
+
+        val actualPage = genreGateway.findAll(query)
+
+        Assertions.assertEquals(expectedPage, actualPage.currentPage)
+        Assertions.assertEquals(expectedPerPage, actualPage.perPage)
+        Assertions.assertEquals(expectedTotal, actualPage.total)
+        Assertions.assertEquals(expectedTotal, actualPage.items.size)
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+        "aç,0,10,1,1,Ação",
+        "dr,0,10,1,1,Drama",
+        "com,0,10,1,1,Comédia romântica",
+        "cien,0,10,1,1,Ficção científica",
+        "terr,0,10,1,1,Terror"
+    )
+    fun givenAValidTerm_whenCallsFindAll_shouldReturnFiltered(
+        expectedTerms: String?,
+        expectedPage: Int,
+        expectedPerPage: Int,
+        expectedItemsCount: Int,
+        expectedTotal: Long,
+        expectedGenreName: String?
+    ) {
+        mockGenres()
+        val expectedSort = "name"
+        val expectedDirection = "asc"
+        val query = SearchQuery(
+            expectedPage, expectedPerPage,
+            expectedTerms!!, expectedSort, expectedDirection
+        )
+
+        val actualPage = genreGateway.findAll(query)
+
+        Assertions.assertEquals(expectedPage, actualPage.currentPage)
+        Assertions.assertEquals(expectedPerPage, actualPage.perPage)
+        Assertions.assertEquals(expectedTotal, actualPage.total)
+        Assertions.assertEquals(expectedItemsCount, actualPage.items.size)
+        Assertions.assertEquals(expectedGenreName, actualPage.items[0].name)
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+        "name,asc,0,10,5,5,Ação",
+        "name,desc,0,10,5,5,Terror",
+        "createdAt,asc,0,10,5,5,Comédia romântica",
+        "createdAt,desc,0,10,5,5,Ficção científica"
+    )
+    fun givenAValidSortAndDirection_whenCallsFindAll_shouldReturnFiltered(
+        expectedSort: String?,
+        expectedDirection: String?,
+        expectedPage: Int,
+        expectedPerPage: Int,
+        expectedItemsCount: Int,
+        expectedTotal: Long,
+        expectedGenreName: String?
+    ) {
+        mockGenres()
+        val expectedTerms = ""
+        val query = SearchQuery(
+            expectedPage, expectedPerPage, expectedTerms,
+            expectedSort!!, expectedDirection!!
+        )
+
+        val actualPage = genreGateway.findAll(query)
+
+        Assertions.assertEquals(expectedPage, actualPage.currentPage)
+        Assertions.assertEquals(expectedPerPage, actualPage.perPage)
+        Assertions.assertEquals(expectedTotal, actualPage.total)
+        Assertions.assertEquals(expectedItemsCount, actualPage.items.size)
+        Assertions.assertEquals(expectedGenreName, actualPage.items[0].name)
+    }
+
+    @ParameterizedTest
+    @CsvSource("0,2,2,5,Ação;Comédia romântica", "1,2,2,5,Drama;Ficção científica", "2,2,1,5,Terror")
+    open fun givenAValidSortAndDirection_whenCallsFindAll_shouldReturnFiltered(
+        expectedPage: Int,
+        expectedPerPage: Int,
+        expectedItemsCount: Int,
+        expectedTotal: Long,
+        expectedGenres: String
+    ) {
+        mockGenres()
+        val expectedTerms = ""
+        val expectedSort = "name"
+        val expectedDirection = "asc"
+        val query = SearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort, expectedDirection)
+
+        val actualPage = genreGateway.findAll(query)
+
+        Assertions.assertEquals(expectedPage, actualPage.currentPage)
+        Assertions.assertEquals(expectedPerPage, actualPage.perPage)
+        Assertions.assertEquals(expectedTotal, actualPage.total)
+        Assertions.assertEquals(expectedItemsCount, actualPage.items.size)
+        for ((index, expectedName) in expectedGenres.split(";".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+            .withIndex()) {
+            val actualName = actualPage.items[index].name
+            Assertions.assertEquals(expectedName, actualName)
+        }
+    }
+
+    private fun mockGenres() {
+        genreRepository.saveAllAndFlush(
+            listOf(
+                GenreJpaEntity.from(Genre.newGenre("Comédia romântica", true)),
+                GenreJpaEntity.from(Genre.newGenre("Ação", true)),
+                GenreJpaEntity.from(Genre.newGenre("Drama", true)),
+                GenreJpaEntity.from(Genre.newGenre("Terror", true)),
+                GenreJpaEntity.from(Genre.newGenre("Ficção científica", true))
+            )
+        )
     }
 
     private fun sorted(expectedCategories: List<CategoryID>) = expectedCategories.stream()
