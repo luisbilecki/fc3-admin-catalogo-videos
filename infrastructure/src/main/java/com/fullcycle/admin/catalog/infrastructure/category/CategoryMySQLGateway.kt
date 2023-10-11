@@ -13,6 +13,7 @@ import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.stereotype.Component
 import java.util.*
+import java.util.stream.StreamSupport
 
 
 @Component
@@ -32,9 +33,13 @@ class CategoryMySQLGateway(private val repository: CategoryRepository) : Categor
         .map(CategoryJpaEntity::toAggregate)
         .orElse(null)
 
-    override fun existsByIds(ids: Iterable<CategoryID>): List<CategoryID> {
-        // TODO: Implementar quando chegar na camada de infraestrutura de Genre.
-        return Collections.emptyList()
+    override fun existsByIds(categoryIDs: Iterable<CategoryID>): List<CategoryID>{
+        val ids = StreamSupport.stream(categoryIDs.spliterator(), false)
+            .map(CategoryID::value)
+            .toList()
+        return repository.existsByIds(ids).stream()
+            .map(CategoryID::from)
+            .toList()
     }
 
     override fun update(category: Category?) = save(category)
