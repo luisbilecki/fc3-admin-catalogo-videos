@@ -7,8 +7,8 @@ import com.fullcycle.admin.catalog.domain.validation.firstError
 import com.fullcycle.admin.catalog.infrastructure.category.persistence.CategoryRepository
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito.`when`
 import org.mockito.Mockito.verify
+import org.mockito.Mockito.`when`
 import org.mockito.kotlin.any
 import org.mockito.kotlin.times
 import org.springframework.beans.factory.annotation.Autowired

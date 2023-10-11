@@ -1,14 +1,15 @@
 package com.fullcycle.admin.catalog.infrastructure.category
 
+import com.fullcycle.admin.catalog.MySQLGatewayTest
 import com.fullcycle.admin.catalog.domain.category.Category
 import com.fullcycle.admin.catalog.domain.category.CategoryID
 import com.fullcycle.admin.catalog.domain.pagination.SearchQuery
-import com.fullcycle.admin.catalog.MySQLGatewayTest
 import com.fullcycle.admin.catalog.infrastructure.category.persistence.CategoryJpaEntity
 import com.fullcycle.admin.catalog.infrastructure.category.persistence.CategoryRepository
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+
 
 @MySQLGatewayTest
 open class CategoryMySQLGatewayTest @Autowired constructor(
@@ -336,5 +337,26 @@ open class CategoryMySQLGatewayTest @Autowired constructor(
         Assertions.assertEquals(expectedTotal, actualResult.total)
         Assertions.assertEquals(expectedPerPage, actualResult.items.size)
         Assertions.assertEquals(movies.id, actualResult.items.first().id)
+    }
+
+    @Test
+    fun givenPrePersistedCategories_whenCallsExistsByIds_shouldReturnIds() {
+        val moviesCategory = Category.newCategory("Filmes", "A categoria mais assistida", true)
+        val seriesCategory = Category.newCategory("Séries", "Uma categoria assistida", true)
+        val documentariesCategory = Category.newCategory("Documentários", "A categoria menos assistida", true)
+        Assertions.assertEquals(0, categoryRepository.count())
+        categoryRepository.saveAll(
+            listOf(
+                CategoryJpaEntity.from(moviesCategory),
+                CategoryJpaEntity.from(seriesCategory),
+                CategoryJpaEntity.from(documentariesCategory)
+            )
+        )
+        Assertions.assertEquals(3, categoryRepository.count())
+        val expectedIds = listOf(moviesCategory.id, seriesCategory.id)
+        val ids = listOf(moviesCategory.id, seriesCategory.id, CategoryID.from("123"))
+
+        val actualResult = categoryGateway.existsByIds(ids)
+        Assertions.assertEquals(expectedIds, actualResult)
     }
 }
