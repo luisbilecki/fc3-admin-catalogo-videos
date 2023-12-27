@@ -9,8 +9,8 @@ import com.fullcycle.admin.catalog.application.category.retrieve.list.ListCatego
 import com.fullcycle.admin.catalog.application.category.update.UpdateCategoryCommand
 import com.fullcycle.admin.catalog.application.category.update.UpdateCategoryOutput
 import com.fullcycle.admin.catalog.application.category.update.UpdateCategoryUseCase
-import com.fullcycle.admin.catalog.domain.pagination.SearchQuery
 import com.fullcycle.admin.catalog.domain.pagination.Pagination
+import com.fullcycle.admin.catalog.domain.pagination.SearchQuery
 import com.fullcycle.admin.catalog.domain.validation.handler.Notification
 import com.fullcycle.admin.catalog.infrastructure.api.CategoryAPI
 import com.fullcycle.admin.catalog.infrastructure.category.models.CategoryListResponse

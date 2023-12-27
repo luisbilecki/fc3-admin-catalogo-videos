@@ -7,6 +7,7 @@ import com.fullcycle.admin.catalog.domain.genre.Genre
 import java.time.Instant
 
 data class GenreListOutput(
+    val id: String,
     val name: String?,
     val isActive: Boolean,
     val categories: List<String>,
@@ -18,6 +19,7 @@ data class GenreListOutput(
 
         fun from(genre: Genre): GenreListOutput {
             return GenreListOutput(
+                genre.id.value,
                 genre.name,
                 genre.isActive,
                 genre.categories.stream()

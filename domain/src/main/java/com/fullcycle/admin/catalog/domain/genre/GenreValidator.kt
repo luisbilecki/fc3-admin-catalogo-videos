@@ -1,8 +1,8 @@
 package com.fullcycle.admin.catalog.domain.genre
 
+import com.fullcycle.admin.catalog.domain.validation.Error
 import com.fullcycle.admin.catalog.domain.validation.ValidationHandler
 import com.fullcycle.admin.catalog.domain.validation.Validator
-import com.fullcycle.admin.catalog.domain.validation.Error
 
 
 class GenreValidator(private val genre: Genre, handler: ValidationHandler) :

@@ -1,7 +1,6 @@
 package com.fullcycle.admin.catalog.domain.pagination
 
 import java.util.function.Function
-import kotlin.streams.toList
 
 
 data class Pagination<T>(val currentPage: Int, val perPage: Int, val total: Long, val items: List<T>) {
